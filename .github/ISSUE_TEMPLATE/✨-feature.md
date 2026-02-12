@@ -1,8 +1,8 @@
 ---
 name: "✨ Feature"
 about: Feature 작업 이슈를 생성해주세요!
-title: "[Feat]"
-labels: ''
+title: "[Feat] "
+labels: enhancement
 assignees: ''
 
 ---
