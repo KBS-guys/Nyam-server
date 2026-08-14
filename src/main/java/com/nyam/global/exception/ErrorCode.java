@@ -3,21 +3,46 @@ package com.nyam.global.exception;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+/**
+ * API에서 공개할 HTTP 상태, 오류 코드, 안전한 메시지를 한곳에서 정의합니다.
+ */
 @Getter
 public enum ErrorCode {
 
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E001", "서버 에러가 발생했습니다."),
-    INVALID_INPUT(HttpStatus.BAD_GATEWAY, "E002", "잘못된 요청입니다."),
+    /** 예상하지 못한 서버 내부 오류입니다. */
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "서버 에러가 발생했습니다."),
+    /** 요청 본문이나 필드 형식이 유효하지 않은 오류입니다. */
+    INVALID_INPUT(HttpStatus.BAD_REQUEST, "INVALID_INPUT", "잘못된 요청입니다."),
+    /** 인증 정보가 필요한 요청의 오류입니다. */
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "E003", "인증이 필요합니다."),
+    /** 인증된 사용자가 해당 작업을 수행할 권한이 없는 오류입니다. */
     FORBIDDEN(HttpStatus.FORBIDDEN, "E004", "접근이 거부되었습니다."),
 
+    /** 정규화 이메일이 이미 등록된 오류입니다. */
+    EMAIL_ALREADY_REGISTERED(HttpStatus.CONFLICT, "EMAIL_ALREADY_REGISTERED", "이미 가입된 이메일입니다."),
+    /** 이메일 검증 증명이 없거나 만료되었거나 유효하지 않은 오류입니다. */
+    EMAIL_VERIFICATION_INVALID(HttpStatus.UNPROCESSABLE_ENTITY, "EMAIL_VERIFICATION_INVALID", "이메일 인증 정보가 유효하지 않습니다."),
+    /** 사용자가 회원가입 최소 연령을 충족하지 못한 오류입니다. */
+    UNDERAGE_NOT_ALLOWED(HttpStatus.UNPROCESSABLE_ENTITY, "UNDERAGE_NOT_ALLOWED", "만 19세 이상만 가입할 수 있습니다."),
+    /** 현재 버전의 필수 동의가 정확히 제출되지 않은 오류입니다. */
+    REQUIRED_CONSENT_MISSING(HttpStatus.UNPROCESSABLE_ENTITY, "REQUIRED_CONSENT_MISSING", "필수 동의 항목을 확인해 주세요."),
+    /** 비밀번호가 길이 또는 문자 인코딩 정책을 위반한 오류입니다. */
+    PASSWORD_POLICY_VIOLATION(HttpStatus.UNPROCESSABLE_ENTITY, "PASSWORD_POLICY_VIOLATION", "비밀번호 정책을 충족하지 않습니다."),
     // USER
+    /** 요청한 사용자를 찾을 수 없는 오류입니다. */
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "사용자를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
     private final String message;
 
+    /**
+     * 오류 응답에 사용할 공개 계약을 구성합니다.
+     *
+     * @param status 반환할 HTTP 상태
+     * @param code 클라이언트가 분기할 공개 오류 코드
+     * @param message 내부 정보를 포함하지 않는 사용자용 메시지
+     */
     ErrorCode(HttpStatus status, String code, String message) {
         this.status = status;
         this.code = code;
