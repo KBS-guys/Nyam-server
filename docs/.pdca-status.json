@@ -1,0 +1,539 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2026-08-14T15:16:41.113Z",
+  "activeFeatures": [
+    "project-foundation",
+    "user-registration"
+  ],
+  "primaryFeature": "user-registration",
+  "features": {
+    "nyamlog-mvp-foundation": {
+      "phase": "completed",
+      "matchRate": null,
+      "iterationCount": 0,
+      "documents": {
+        "plan": "docs/01-plan/features/nyamlog-mvp-foundation.plan.md",
+        "design": "docs/02-design/features/nyamlog-mvp-foundation.design.md"
+      },
+      "taskChain": [
+        {
+          "phase": "plan",
+          "status": "completed",
+          "createdAt": "2026-07-27T07:08:04.234Z",
+          "completedAt": "2026-07-27T07:14:33.437Z"
+        },
+        {
+          "phase": "design",
+          "status": "completed",
+          "createdAt": "2026-07-27T07:08:04.234Z",
+          "completedAt": "2026-08-05T12:57:23.5152796Z"
+        },
+        {
+          "phase": "do",
+          "status": "not_applicable",
+          "createdAt": "2026-07-27T07:08:04.234Z"
+        },
+        {
+          "phase": "check",
+          "status": "not_applicable",
+          "createdAt": "2026-07-27T07:08:04.234Z"
+        },
+        {
+          "phase": "report",
+          "status": "not_applicable",
+          "createdAt": "2026-07-27T07:08:04.234Z"
+        }
+      ],
+      "timestamps": {
+        "started": "2026-07-27T07:08:04.235Z",
+        "lastUpdated": "2026-08-09T12:57:14.428Z",
+        "completed": "2026-08-05T12:57:23.5152796Z"
+      }
+    },
+    "project-foundation": {
+      "phase": "completed",
+      "matchRate": 100,
+      "iterationCount": 1,
+      "documents": {
+        "plan": "docs/01-plan/features/project-foundation.plan.md",
+        "design": "docs/02-design/features/project-foundation.design.md"
+      },
+      "taskChain": [
+        {
+          "phase": "plan",
+          "status": "completed",
+          "createdAt": "2026-08-05T12:57:23.5152796Z",
+          "completedAt": "2026-08-06T10:19:46.256Z"
+        },
+        {
+          "phase": "design",
+          "status": "completed",
+          "createdAt": "2026-08-05T12:57:23.5152796Z",
+          "completedAt": "2026-08-06T10:54:40.4602389Z"
+        },
+        {
+          "phase": "do",
+          "status": "completed",
+          "createdAt": "2026-08-05T12:57:23.5152796Z",
+          "completedAt": "2026-08-07T04:21:54.441Z"
+        },
+        {
+          "phase": "check",
+          "status": "completed",
+          "createdAt": "2026-08-05T12:57:23.5152796Z",
+          "completedAt": "2026-08-07T04:43:08.091Z"
+        },
+        {
+          "phase": "report",
+          "status": "completed",
+          "createdAt": "2026-08-05T12:57:23.5152796Z",
+          "completedAt": "2026-08-08T10:25:41.058Z"
+        }
+      ],
+      "timestamps": {
+        "started": "2026-08-05T12:57:23.5152796Z",
+        "lastUpdated": "2026-08-08T10:25:41.058Z"
+      },
+      "completedAt": "2026-08-08T10:25:41.050Z"
+    },
+    "user-registration": {
+      "phase": "completed",
+      "matchRate": 100,
+      "iterationCount": 4,
+      "documents": {
+        "plan": "docs/01-plan/features/user-registration.plan.md",
+        "design": "docs/02-design/features/user-registration.design.md",
+        "analysis": "docs/03-analysis/user-registration.analysis.md",
+        "report": "docs/04-report/user-registration.report.md"
+      },
+      "taskChain": [
+        {
+          "phase": "plan",
+          "status": "completed",
+          "createdAt": "2026-08-08T10:50:41.826Z",
+          "completedAt": "2026-08-08T11:19:39.920Z"
+        },
+        {
+          "phase": "design",
+          "status": "completed",
+          "createdAt": "2026-08-08T10:50:41.826Z",
+          "startedAt": "2026-08-09T10:05:04.905Z",
+          "completedAt": "2026-08-14T08:16:54.6723812Z"
+        },
+        {
+          "phase": "do",
+          "status": "completed",
+          "createdAt": "2026-08-08T10:50:41.826Z",
+          "startedAt": "2026-08-14T08:37:33.5403173Z",
+          "completedAt": "2026-08-14T09:26:45.6414397Z"
+        },
+        {
+          "phase": "check",
+          "status": "completed",
+          "createdAt": "2026-08-08T10:50:41.826Z",
+          "startedAt": "2026-08-14T13:07:10.8072417Z",
+          "completedAt": "2026-08-14T13:25:41.774Z"
+        },
+        {
+          "phase": "act",
+          "status": "completed",
+          "createdAt": "2026-08-14T13:25:41.774Z",
+          "startedAt": "2026-08-14T13:25:41.774Z",
+          "completedAt": "2026-08-14T15:15:37.093Z"
+        },
+        {
+          "phase": "report",
+          "status": "completed",
+          "createdAt": "2026-08-08T10:50:41.826Z",
+          "startedAt": "2026-08-14T15:15:37.093Z",
+          "completedAt": "2026-08-14T15:16:41.107Z"
+        }
+      ],
+      "timestamps": {
+        "started": "2026-08-08T10:50:41.826Z",
+        "lastUpdated": "2026-08-14T15:16:41.113Z"
+      },
+      "completedAt": "2026-08-14T15:16:41.107Z"
+    }
+  },
+  "pipeline": {
+    "currentPhase": 1,
+    "level": "Dynamic",
+    "phaseHistory": []
+  },
+  "session": {
+    "startedAt": "2026-07-27T07:08:04.228Z",
+    "onboardingCompleted": false,
+    "lastActivity": "2026-08-14T15:16:41.113Z"
+  },
+  "history": [
+    {
+      "feature": "nyamlog-mvp-foundation",
+      "from": "plan",
+      "to": "design",
+      "timestamp": "2026-07-27T07:14:33.426Z"
+    },
+    {
+      "feature": "nyamlog-mvp-foundation",
+      "action": "phase_complete",
+      "phase": "plan",
+      "nextPhase": "design",
+      "timestamp": "2026-07-27T07:14:33.430Z"
+    },
+    {
+      "feature": "nyamlog-mvp-foundation",
+      "from": "design",
+      "to": "design",
+      "timestamp": "2026-07-27T08:23:29.251Z"
+    },
+    {
+      "feature": "nyamlog-mvp-foundation",
+      "action": "phase_complete",
+      "phase": "design",
+      "nextPhase": null,
+      "scope": "foundation-plan-and-design-handoff",
+      "timestamp": "2026-08-05T12:57:23.5152796Z"
+    },
+    {
+      "feature": "nyamlog-mvp-foundation",
+      "from": "design",
+      "to": "completed",
+      "timestamp": "2026-08-05T12:57:23.5152796Z"
+    },
+    {
+      "feature": "project-foundation",
+      "action": "feature_registered",
+      "to": "plan",
+      "timestamp": "2026-08-05T12:57:23.5152796Z"
+    },
+    {
+      "feature": "project-foundation",
+      "from": "plan",
+      "to": "design",
+      "timestamp": "2026-08-06T10:19:46.247Z"
+    },
+    {
+      "feature": "project-foundation",
+      "action": "phase_complete",
+      "phase": "plan",
+      "nextPhase": "design",
+      "timestamp": "2026-08-06T10:19:46.253Z"
+    },
+    {
+      "feature": "project-foundation",
+      "from": "design",
+      "to": "do",
+      "timestamp": "2026-08-06T10:54:40.4602389Z"
+    },
+    {
+      "feature": "project-foundation",
+      "action": "phase_complete",
+      "phase": "design",
+      "nextPhase": "do",
+      "timestamp": "2026-08-06T10:54:40.4602389Z"
+    },
+    {
+      "feature": "project-foundation",
+      "from": "do",
+      "to": "check",
+      "timestamp": "2026-08-07T04:21:54.430Z"
+    },
+    {
+      "feature": "project-foundation",
+      "action": "phase_complete",
+      "phase": "do",
+      "nextPhase": "check",
+      "timestamp": "2026-08-07T04:21:54.435Z"
+    },
+    {
+      "feature": "project-foundation",
+      "from": "check",
+      "to": "report",
+      "timestamp": "2026-08-07T04:43:08.076Z"
+    },
+    {
+      "feature": "project-foundation",
+      "action": "phase_complete",
+      "phase": "check",
+      "nextPhase": "report",
+      "timestamp": "2026-08-07T04:43:08.085Z"
+    },
+    {
+      "feature": "project-foundation",
+      "action": "phase_complete",
+      "phase": "report",
+      "nextPhase": "completed",
+      "timestamp": "2026-08-08T10:25:41.057Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "plan_approved",
+      "phase": "plan",
+      "nextPhase": null,
+      "decision": "USER-REGISTRATION-001",
+      "scope": "plan-only-approval-no-design-transition",
+      "timestamp": "2026-08-08T11:19:39.920Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "AUTH-001-R1",
+      "scope": "email-internationalization-only-no-feature-phase-transition",
+      "timestamp": "2026-08-09T10:05:04.905Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "AUTH-004",
+      "scope": "local-password-blocklist-only-no-feature-phase-transition",
+      "timestamp": "2026-08-09T10:30:46.138Z"
+    },
+    {
+      "feature": "nyamlog-mvp-foundation",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "FOUNDATION-004-R1",
+      "scope": "pre-registration-email-verification-dependency-amendment-no-phase-reopen",
+      "timestamp": "2026-08-09T11:35:43.624Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "plan_revision_approved",
+      "phase": "plan",
+      "decision": "USER-REGISTRATION-001-R1",
+      "scope": "pre-registration-email-verification-and-active-account-creation-no-phase-transition",
+      "timestamp": "2026-08-09T11:35:43.624Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "AUTH-005",
+      "scope": "pre-registration-email-verification-orchestration-only-no-feature-phase-transition",
+      "timestamp": "2026-08-09T11:35:43.624Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "AUTH-001-R2",
+      "scope": "no-persisted-account-status-limited-mvp-no-feature-phase-transition",
+      "timestamp": "2026-08-09T12:35:38.395Z"
+    },
+    {
+      "feature": "nyamlog-mvp-foundation",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "FOUNDATION-005",
+      "scope": "account-deletion-mvp-physical-active-database-removal-no-foundation-phase-reopen",
+      "timestamp": "2026-08-09T12:57:14.428Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "USER-REGISTRATION-002",
+      "scope": "minimal-three-table-registration-erd-only-no-feature-phase-transition",
+      "timestamp": "2026-08-09T13:18:55.634Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "USER-REGISTRATION-003",
+      "scope": "registration-api-dto-error-and-opaque-proof-transport-only-no-feature-phase-transition",
+      "timestamp": "2026-08-09T13:38:15.461Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "USER-REGISTRATION-004",
+      "scope": "opaque-proof-generation-hashed-persistence-expiry-locking-and-atomic-consumption-only-no-feature-phase-transition",
+      "timestamp": "2026-08-14T07:44:31.4446471Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "USER-REGISTRATION-005",
+      "scope": "registration-only-spring-security-crypto-and-password-encoder-activation-contract-no-feature-phase-transition",
+      "timestamp": "2026-08-14T08:00:34.7957145Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "USER-REGISTRATION-006",
+      "scope": "layered-registration-test-matrix-and-design-completion-no-feature-phase-transition",
+      "timestamp": "2026-08-14T08:16:54.6723812Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "phase_complete",
+      "phase": "design",
+      "nextPhase": null,
+      "scope": "approved-design-complete-implementation-not-started-feature-phase-retained",
+      "timestamp": "2026-08-14T08:16:54.6723812Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "USER-REGISTRATION-007",
+      "scope": "minimal-openapi-swagger-contract-no-adjacent-feature-expansion",
+      "timestamp": "2026-08-14T08:37:33.5403173Z"
+    },
+    {
+      "feature": "user-registration",
+      "from": "plan",
+      "to": "do",
+      "action": "do_started",
+      "scope": "approved-user-registration-implementation-including-openapi",
+      "timestamp": "2026-08-14T08:37:33.5403173Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "phase_complete",
+      "phase": "do",
+      "nextPhase": null,
+      "scope": "approved-user-registration-do-complete-check-not-started",
+      "timestamp": "2026-08-14T09:26:45.6414397Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "check_analysis_recorded",
+      "phase": "check",
+      "matchRate": 86.1,
+      "iterationCount": 1,
+      "scope": "initial-gap-analysis-31-of-36-act-required",
+      "timestamp": "2026-08-14T13:07:10.8072417Z"
+    },
+    {
+      "feature": "user-registration",
+      "from": "check",
+      "to": "act",
+      "timestamp": "2026-08-14T13:25:41.771Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "phase_complete",
+      "phase": "check",
+      "nextPhase": "act",
+      "timestamp": "2026-08-14T13:25:41.774Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "design_decision_approved",
+      "phase": "act",
+      "decision": "USER-REGISTRATION-008",
+      "scope": "proof-replacement-and-canonical-email-race-test-clarification-no-api-or-schema-change",
+      "timestamp": "2026-08-14T13:33:35.5335382Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "check_analysis_recorded",
+      "phase": "check",
+      "matchRate": 100,
+      "iterationCount": 2,
+      "scope": "post-act-gap-analysis-36-of-36-all-tests-passed",
+      "timestamp": "2026-08-14T13:50:51.0260404Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "phase_complete",
+      "phase": "act",
+      "nextPhase": null,
+      "scope": "act-complete-report-not-started",
+      "timestamp": "2026-08-14T13:50:51.0260404Z"
+    },
+    {
+      "feature": "nyamlog-mvp-foundation",
+      "action": "design_decision_approved",
+      "phase": "completed",
+      "decision": "FOUNDATION-006",
+      "scope": "personally-deployed-toy-project-scope-reset-no-commercial-service-requirements",
+      "timestamp": "2026-08-14T14:23:16.510Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "design_decision_approved",
+      "phase": "act",
+      "decision": "USER-REGISTRATION-009",
+      "scope": "transaction-focused-toy-project-simplification-reanalysis-required",
+      "timestamp": "2026-08-14T14:23:16.510Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "scope_reset_requires_reanalysis",
+      "phase": "act",
+      "matchRate": null,
+      "iterationCount": 3,
+      "scope": "former-100-percent-is-historical-report-remains-pending",
+      "timestamp": "2026-08-14T14:23:16.510Z"
+    },
+    {
+      "feature": "nyamlog-mvp-foundation",
+      "action": "scope_clarification_recorded",
+      "phase": "completed",
+      "decision": "FOUNDATION-006",
+      "scope": "small-voluntary-acquaintance-trial-allowed-no-commercial-public-service",
+      "timestamp": "2026-08-14T14:27:35.924Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "scope_clarification_recorded",
+      "phase": "act",
+      "decision": "USER-REGISTRATION-009",
+      "scope": "few-invited-acquaintances-may-register-for-voluntary-trial-and-feedback",
+      "timestamp": "2026-08-14T14:27:35.924Z"
+    },
+    {
+      "feature": "nyamlog-mvp-foundation",
+      "action": "design_decision_approved",
+      "phase": "completed",
+      "decision": "FOUNDATION-006-R1",
+      "scope": "retain-email-password-and-at-least-one-social-signup-login-method",
+      "timestamp": "2026-08-14T14:31:46.839Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "feature_boundary_clarified",
+      "phase": "act",
+      "decision": "FOUNDATION-006-R1",
+      "scope": "social-login-remains-project-scope-owned-by-separate-feature-not-current-gap",
+      "timestamp": "2026-08-14T14:31:46.839Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "act_reanalysis_recorded",
+      "phase": "act",
+      "matchRate": 100,
+      "iterationCount": 4,
+      "scope": "toy-project-simplification-implemented-28-of-28-report-awaits-explicit-transition",
+      "timestamp": "2026-08-14T15:12:32.7913427Z"
+    },
+    {
+      "feature": "user-registration",
+      "from": "act",
+      "to": "report",
+      "timestamp": "2026-08-14T15:15:37.093Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "phase_complete",
+      "phase": "act",
+      "nextPhase": "report",
+      "timestamp": "2026-08-14T15:15:37.094Z"
+    },
+    {
+      "feature": "user-registration",
+      "action": "phase_complete",
+      "phase": "report",
+      "nextPhase": "completed",
+      "timestamp": "2026-08-14T15:16:41.111Z"
+    }
+  ]
+}
