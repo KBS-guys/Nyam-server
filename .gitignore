@@ -63,3 +63,17 @@ out/
 .env
 application.yml
 application.properties
+
+# Local agent and tool context
+/.bkit-codex/
+/.codex/
+/.agents/
+
+# Repository-tracked project context
+!/AGENTS.md
+!/docs/
+!/docs/**
+
+# Local reference artifacts
+/docs/reference/
+/data/reference/
