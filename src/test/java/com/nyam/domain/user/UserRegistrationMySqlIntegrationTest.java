@@ -46,7 +46,8 @@ import com.nyam.domain.user.service.VerificationProofHasher;
 /**
  * 실제 MySQL에서 회원가입 성공, proof 소비, 중복 방지와 트랜잭션 롤백을 검증합니다.
  */
-@SpringBootTest
+@SpringBootTest(properties =
+        "NYAM_EMAIL_VERIFICATION_HMAC_SECRET=QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=")
 @AutoConfigureMockMvc
 @Testcontainers(disabledWithoutDocker = true)
 class UserRegistrationMySqlIntegrationTest {
