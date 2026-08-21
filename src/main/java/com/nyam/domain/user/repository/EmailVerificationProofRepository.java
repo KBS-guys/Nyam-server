@@ -25,4 +25,15 @@ public interface EmailVerificationProofRepository extends JpaRepository<EmailVer
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select proof from EmailVerificationProof proof where proof.proofHash = :proofHash")
     Optional<EmailVerificationProof> findByProofHashForUpdate(@Param("proofHash") byte[] proofHash);
+
+    /**
+     * 같은 이메일의 미소비 증명을 안전하게 교체하도록 쓰기 잠금으로 조회합니다.
+     *
+     * @param canonicalEmail 조회할 정규화 이메일
+     * @return 현재 미소비 증명이며 존재하지 않으면 빈 값
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select proof from EmailVerificationProof proof where proof.canonicalEmail = :canonicalEmail")
+    Optional<EmailVerificationProof> findByCanonicalEmailForUpdate(
+            @Param("canonicalEmail") String canonicalEmail);
 }
