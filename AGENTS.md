@@ -97,6 +97,8 @@ When working on complex features:
 - Nyamlog is a solo-maintained learning toy project that may be used as junior-backend portfolio evidence. Deployment, direct use by the developer, and voluntary trial and feedback from a small number of acquaintances are in scope; commercial launch, exhibition operation, and ongoing service delivery to the general public are not.
 - Current release scope and feature inclusion are determined by the applicable approved, non-superseded Plan, Design, or ADR, not by this file.
 - Prioritize completing one bounded, working vertical flow over expanding adjacent features or speculative infrastructure.
+- Treat PDCA documents as tools for making decisions, guiding implementation, and preserving verification evidence rather than as independent deliverables. Keep them proportional to the bounded feature and avoid repeating the same scope, decision rationale, or test evidence across phases.
+- Once the approved scope and high-cost decisions are clear, spend the majority of feature effort on completing and verifying the working vertical flow.
 - Prefer the smallest secure implementation that satisfies the approved acceptance scenarios.
 - Judge optional work by whether a junior developer can explain it, whether it teaches a backend fundamental, and whether it helps complete the core flow or one small deployment. Defer work that mainly prepares for commercial operation, unrestricted public users, scale, or exhaustive edge-case coverage.
 - Toy-project scope limits feature breadth, operational complexity, and speculative scalability; it does not permit insecure password storage, broken user-data isolation, or silent data corruption.
@@ -150,14 +152,20 @@ If an approved requirement conflicts with a baseline safety boundary, stop and r
 
 ## 5. Approval Required
 
-The authoritative unresolved-decision list is maintained in the applicable active Design's `Remaining Design Decisions` section. A task may have no applicable active Design.
+The authoritative unresolved-review scope is maintained in the applicable active Design's remaining-decision or consolidated-review section. A task may have no applicable active Design.
+
+For a bounded feature, default to presenting one complete Design draft before requesting whole-Design approval. Group related policy values and dependent choices by functional concern so the user can review the complete flow and its final failure states together. A list of unresolved concerns defines coverage; it does not require a separate proposal, document mutation, status update, or approval round for every item.
+
+Use a standalone Design decision before whole-Design approval only when a choice materially changes schema, public API, security, ownership, transaction behavior, concurrency outcome, external-integration behavior, or feature scope. Numeric policy values and reversible internal choices normally belong in the consolidated Design unless their risk or coupling makes separate approval necessary.
+
+Whole-Design approval and implementation authorization are distinct gates unless the user explicitly approves both exact scopes together.
 
 Before asking for approval or making a design choice:
 
 1. Check the active feature and phase.
 2. Read the applicable Plan, Design, ADR, and decision log.
-3. If an applicable active Design exists, check its `Remaining Design Decisions` section.
-4. Confirm that the topic is still unresolved.
+3. If an applicable active Design exists, check its remaining-decision or consolidated-review section.
+4. Confirm that the topic is still unresolved and whether it requires standalone approval or belongs in the consolidated draft.
 5. Do not reopen an approved, non-superseded decision without a concrete reason.
 6. Record an approved change as a new superseding decision instead of replacing or ignoring the prior record.
 
@@ -170,8 +178,13 @@ Do not duplicate mutable approved decisions, unresolved-decision lists, or curre
 - Small bug fixes, validation changes, DTO adjustments, tests, documentation, and isolated configuration corrections may use a lightweight workflow.
 - A lightweight workflow does not bypass applicable approved decisions, baseline safety boundaries, ownership checks, data-integrity rules, or required verification.
 - Do not create a new PDCA document for every endpoint, class, or minor implementation detail.
+- For one bounded feature or integrated vertical slice, prefer one concise Plan and one consolidated Design. Do not serially gate each endpoint, policy threshold, class, method, library default, or test case as an independent Design decision.
+- Keep the Plan focused on purpose, scope, acceptance scenarios, and material risks; keep the Design focused on decisions that are expensive or unsafe to reverse. Keep Analysis focused on actual gaps and verification evidence, and keep Report as a concise completion record rather than repeating the full Plan and Design.
+- Keep public API meanings and validation, schema constraints, security controls, ownership rules, transaction and concurrency outcomes, external-side-effect failure outcomes, and representative verification scenarios in Design. Defer exact class and method names, exception hierarchy, SQL statement text, test method names, package paths, and other reversible internal choices to implementation unless they change an approved contract.
+- Update PDCA status for phase transitions and material approved decisions. Do not mutate it for draft comments, wording-only review, or reversible implementation details.
 - Implement approved work in small, independently testable increments.
-- If implementation reveals a conflict with an approved decision, stop and report it. Propose an explicit superseding decision when the design should change.
+- After Design approval and implementation authorization, continue through the approved implementation in small increments without requesting new approval for covered internal choices. Stop and report only when implementation reveals a concrete approved-design conflict, security or data-integrity problem, unimplementable constraint, material scope expansion, or a new action that independently requires approval under this file.
+- Propose an explicit superseding decision when an approved Design should change; do not create a new decision merely to record an implementation detail.
 - Verify Figma, API drafts, ERD drafts, and external data against approved decisions. Draft artifacts are not final implementation contracts.
 
 ### GitHub Workflow
