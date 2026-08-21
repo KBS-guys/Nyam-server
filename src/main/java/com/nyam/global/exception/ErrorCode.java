@@ -22,6 +22,15 @@ public enum ErrorCode {
     EMAIL_ALREADY_REGISTERED(HttpStatus.CONFLICT, "EMAIL_ALREADY_REGISTERED", "이미 가입된 이메일입니다."),
     /** 이메일 검증 증명이 없거나 만료되었거나 유효하지 않은 오류입니다. */
     EMAIL_VERIFICATION_INVALID(HttpStatus.UNPROCESSABLE_ENTITY, "EMAIL_VERIFICATION_INVALID", "이메일 인증 정보가 유효하지 않습니다."),
+    /** 인증번호 발송 대기시간, 재전송 횟수 또는 잠금 상태로 발송이 제한된 오류입니다. */
+    EMAIL_VERIFICATION_SEND_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "EMAIL_VERIFICATION_SEND_LIMITED",
+            "인증번호를 다시 요청할 수 없습니다."),
+    /** 현재 인증번호의 최대 확인 시도 횟수를 초과한 오류입니다. */
+    EMAIL_VERIFICATION_ATTEMPTS_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS,
+            "EMAIL_VERIFICATION_ATTEMPTS_EXCEEDED", "인증번호 확인 횟수를 초과했습니다."),
+    /** 로컬 메일 시스템으로 인증번호를 전달하지 못한 오류입니다. */
+    EMAIL_DELIVERY_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "EMAIL_DELIVERY_UNAVAILABLE",
+            "인증 메일을 보낼 수 없습니다."),
     /** 사용자가 회원가입 최소 연령을 충족하지 못한 오류입니다. */
     UNDERAGE_NOT_ALLOWED(HttpStatus.UNPROCESSABLE_ENTITY, "UNDERAGE_NOT_ALLOWED", "만 19세 이상만 가입할 수 있습니다."),
     /** 현재 버전의 필수 동의가 정확히 제출되지 않은 오류입니다. */
