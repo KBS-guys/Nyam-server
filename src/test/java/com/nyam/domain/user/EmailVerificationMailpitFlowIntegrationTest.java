@@ -49,6 +49,7 @@ import com.nyam.domain.user.repository.UserAccountRepository;
  */
 @SpringBootTest(properties = {
         "NYAM_EMAIL_VERIFICATION_HMAC_SECRET=QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=",
+        "NYAM_AUTH_ACCESS_SECRET=QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=",
         "springdoc.api-docs.enabled=true",
         "springdoc.swagger-ui.enabled=true"
 })

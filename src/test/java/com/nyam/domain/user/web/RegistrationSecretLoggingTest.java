@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.http.MediaType;
@@ -20,7 +21,9 @@ import com.nyam.domain.user.service.UserRegistrationService;
 /**
  * 회원가입 실패 로그에 검증 증명과 비밀번호가 노출되지 않는지 검증합니다.
  */
-@WebMvcTest(UserRegistrationController.class)
+@WebMvcTest(controllers = UserRegistrationController.class,
+        properties = "NYAM_AUTH_ACCESS_SECRET=QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=")
+@AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(OutputCaptureExtension.class)
 class RegistrationSecretLoggingTest {
 

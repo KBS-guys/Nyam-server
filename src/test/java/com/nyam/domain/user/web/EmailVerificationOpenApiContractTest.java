@@ -11,6 +11,7 @@ import org.springdoc.webmvc.core.configuration.SpringDocWebMvcConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,6 +24,7 @@ import com.nyam.domain.user.service.EmailVerificationService;
         "springdoc.api-docs.enabled=true",
         "springdoc.swagger-ui.enabled=true"
 })
+@AutoConfigureMockMvc(addFilters = false)
 @ImportAutoConfiguration(classes = {
         SpringDocConfiguration.class,
         SpringDocConfigProperties.class,

@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.boot.env.YamlPropertySourceLoader;
@@ -21,6 +22,7 @@ import com.nyam.domain.user.service.UserRegistrationService;
         "springdoc.api-docs.enabled=false",
         "springdoc.swagger-ui.enabled=false"
 })
+@AutoConfigureMockMvc(addFilters = false)
 class OpenApiDisabledTest {
 
     @Autowired

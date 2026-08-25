@@ -1,12 +1,13 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-08-21T14:37:43.2015445Z",
+  "lastUpdated": "2026-08-25T15:12:23.6989504Z",
   "activeFeatures": [
     "project-foundation",
     "user-registration",
-    "email-verification"
+    "email-verification",
+    "local-login"
   ],
-  "primaryFeature": "email-verification",
+  "primaryFeature": "local-login",
   "features": {
     "nyamlog-mvp-foundation": {
       "phase": "completed",
@@ -207,6 +208,66 @@
         "lastUpdated": "2026-08-21T14:37:43.2015445Z"
       },
       "completedAt": "2026-08-21T14:37:43.2015445Z"
+    },
+    "local-login": {
+      "phase": "completed",
+      "matchRate": 100,
+      "iterationCount": 2,
+      "documents": {
+        "plan": "docs/01-plan/features/local-login.plan.md",
+        "design": "docs/02-design/features/local-login.design.md",
+        "analysis": "docs/03-analysis/local-login.analysis.md",
+        "report": "docs/04-report/local-login.report.md"
+      },
+      "taskChain": [
+        {
+          "phase": "plan",
+          "status": "completed",
+          "createdAt": "2026-08-23T12:46:42.238Z",
+          "completedAt": "2026-08-23T12:46:42.238Z"
+        },
+        {
+          "phase": "design",
+          "status": "completed",
+          "createdAt": "2026-08-24T14:30:14.9023056Z",
+          "startedAt": "2026-08-24T14:30:14.9023056Z",
+          "completedAt": "2026-08-24T14:30:14.9023056Z"
+        },
+        {
+          "phase": "do",
+          "status": "completed",
+          "createdAt": "2026-08-25T15:02:12.9684493Z",
+          "startedAt": "2026-08-25T15:02:12.9684493Z",
+          "completedAt": "2026-08-25T15:02:12.9684493Z"
+        },
+        {
+          "phase": "check",
+          "status": "completed",
+          "createdAt": "2026-08-25T15:02:12.9684493Z",
+          "startedAt": "2026-08-25T15:02:12.9684493Z",
+          "completedAt": "2026-08-25T15:02:12.9684493Z"
+        },
+        {
+          "phase": "act",
+          "status": "completed",
+          "createdAt": "2026-08-25T15:02:12.9684493Z",
+          "startedAt": "2026-08-25T15:02:12.9684493Z",
+          "completedAt": "2026-08-25T15:02:12.9684493Z"
+        },
+        {
+          "phase": "report",
+          "status": "completed",
+          "createdAt": "2026-08-25T15:12:23.6989504Z",
+          "startedAt": "2026-08-25T15:12:23.6989504Z",
+          "completedAt": "2026-08-25T15:12:23.6989504Z"
+        }
+      ],
+      "timestamps": {
+        "started": "2026-08-23T12:46:42.238Z",
+        "lastUpdated": "2026-08-25T15:12:23.6989504Z",
+        "completed": "2026-08-25T15:12:23.6989504Z"
+      },
+      "completedAt": "2026-08-25T15:12:23.6989504Z"
     }
   },
   "pipeline": {
@@ -217,7 +278,7 @@
   "session": {
     "startedAt": "2026-07-27T07:08:04.228Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-08-21T14:37:43.2015445Z"
+    "lastActivity": "2026-08-25T15:12:23.6989504Z"
   },
   "history": [
     {
@@ -703,6 +764,112 @@
       "iterationCount": 1,
       "scope": "email-verification-completed-through-report-no-archive-or-git-publication",
       "timestamp": "2026-08-21T14:37:43.2015445Z"
+    },
+    {
+      "feature": "local-login",
+      "action": "plan_approved",
+      "phase": "plan",
+      "nextPhase": null,
+      "decision": "LOCAL-LOGIN-001",
+      "scope": "access-and-refresh-token-login-persistence-plan-only-no-design-or-implementation",
+      "timestamp": "2026-08-23T12:46:42.238Z"
+    },
+    {
+      "feature": "local-login",
+      "action": "plan_revision_approved",
+      "phase": "plan",
+      "decision": "LOCAL-LOGIN-001-R1",
+      "scope": "same-refresh-token-single-winner-and-loser-no-set-cookie-server-evidence-pwa-ordering-unexecuted",
+      "timestamp": "2026-08-24T14:30:14.9023056Z"
+    },
+    {
+      "feature": "local-login",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "LOCAL-LOGIN-002",
+      "scope": "simplified-persistent-local-login-whole-design-no-implementation",
+      "timestamp": "2026-08-24T14:30:14.9023056Z"
+    },
+    {
+      "feature": "local-login",
+      "action": "phase_complete",
+      "phase": "design",
+      "nextPhase": null,
+      "scope": "approved-design-complete-implementation-not-started",
+      "timestamp": "2026-08-24T14:30:14.9023056Z"
+    },
+    {
+      "feature": "local-login",
+      "from": "design",
+      "to": "do",
+      "action": "do_started",
+      "scope": "approved-local-login-vertical-slice-implementation-and-verification",
+      "timestamp": "2026-08-25T15:02:12.9684493Z"
+    },
+    {
+      "feature": "local-login",
+      "action": "phase_complete",
+      "phase": "do",
+      "nextPhase": "check",
+      "scope": "approved-local-login-server-vertical-slice-implemented",
+      "timestamp": "2026-08-25T15:02:12.9684493Z"
+    },
+    {
+      "feature": "local-login",
+      "action": "check_analysis_recorded",
+      "phase": "check",
+      "iterationCount": 1,
+      "scope": "initial-check-four-gaps-act-required",
+      "timestamp": "2026-08-25T15:02:12.9684493Z"
+    },
+    {
+      "feature": "local-login",
+      "from": "check",
+      "to": "act",
+      "timestamp": "2026-08-25T15:02:12.9684493Z"
+    },
+    {
+      "feature": "local-login",
+      "action": "phase_complete",
+      "phase": "check",
+      "nextPhase": "act",
+      "scope": "initial-check-complete-four-gaps-require-correction",
+      "timestamp": "2026-08-25T15:02:12.9684493Z"
+    },
+    {
+      "feature": "local-login",
+      "action": "check_analysis_recorded",
+      "phase": "check",
+      "matchRate": 100,
+      "iterationCount": 2,
+      "scope": "post-act-design-match-26-of-26-all-tests-and-mysql-passed",
+      "timestamp": "2026-08-25T15:02:12.9684493Z"
+    },
+    {
+      "feature": "local-login",
+      "action": "phase_complete",
+      "phase": "act",
+      "nextPhase": "report",
+      "scope": "act-and-reanalysis-complete-report-not-started",
+      "timestamp": "2026-08-25T15:02:12.9684493Z"
+    },
+    {
+      "feature": "local-login",
+      "from": "act",
+      "to": "report",
+      "action": "report_started",
+      "scope": "approved-local-login-completion-report",
+      "timestamp": "2026-08-25T15:12:23.6989504Z"
+    },
+    {
+      "feature": "local-login",
+      "action": "phase_complete",
+      "phase": "report",
+      "nextPhase": "completed",
+      "matchRate": 100,
+      "iterationCount": 2,
+      "scope": "local-login-completed-through-report-no-archive-or-git-publication",
+      "timestamp": "2026-08-25T15:12:23.6989504Z"
     }
   ]
 }

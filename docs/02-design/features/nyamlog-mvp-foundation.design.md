@@ -1,10 +1,10 @@
 # nyamlog-mvp-foundation - Design Document
 
-> **Version**: 2.1.0 <br>
-> **Date**: 2026-08-14 <br>
+> **Version**: 2.2.0 <br>
+> **Date**: 2026-08-23 <br>
 > **Status**: Approved (Foundation Complete) <br>
 > **Plan**: `docs/01-plan/features/nyamlog-mvp-foundation.plan.md` <br>
-> **Current Design Decision**: `FOUNDATION-006-R1`
+> **Current Design Decisions**: `FOUNDATION-006-R1`, `LOCAL-LOGIN-001`
 
 ---
 
@@ -56,12 +56,13 @@ The first authentication flow is intentionally basic:
 - Local email and password registration
 - BCrypt password storage through `PasswordEncoder`
 - One simple login flow and short-lived Access Token
+- One server-managed Refresh Token flow for Access Token reissue, rotation, and logout revocation
 - At least one social provider supporting first-time account creation and subsequent login
 - The same Nyamlog Access Token and protected-API authorization model for local and social users
 - Protected APIs read the authenticated user from Spring Security
-- Logout means the client discards its token unless a later learning goal explicitly adds server-side revocation
+- Logout revokes the presented Refresh Token server state and deletes its cookie; the client discards its Access Token, which may otherwise remain valid until its short expiry
 
-Password reset, additional social providers, Refresh Token rotation, device sessions, production mail, and account lifecycle states are deferred.
+Password reset, additional social providers, advanced Refresh Token reuse detection, multi-device session management, production mail, and account lifecycle states are deferred.
 
 The later `social-login` Design selects the first provider and defines its callback and provider API usage. A social identity is keyed by provider plus provider subject. Do not merge a social identity into an existing local account solely because the provider returns the same email; explicit linking or a safe conflict policy must be chosen before that feature is implemented.
 
@@ -156,6 +157,17 @@ Older verbose Foundation sections are superseded by this concise Design and are 
 - Do not expand the current local `user-registration` transaction with OAuth callback or provider API logic.
 - Defer provider selection, provider credentials, provider-subject schema, email collision, and account-linking rules to the bounded `social-login` Plan and Design.
 
+### 10.2 `LOCAL-LOGIN-001` - Persistent Local Login
+
+**Status:** Approved 2026-08-23 <br>
+**Supersedes:** Only the Refresh Token rotation deferral and client-only logout clause in section 4
+
+- Add Refresh Token issuance, server validity state, Access Token reissue, atomic rotation, and logout revocation to `local-login`.
+- Deliver the Access Token in the response body for Bearer authentication and the Refresh Token only through an HttpOnly cookie.
+- Delete the Refresh Token cookie on logout while documenting that an issued Access Token may remain valid until its short expiry.
+- Keep advanced reuse detection, multi-device session management, and production-scale session infrastructure deferred.
+- Defer token lifetimes, persistence schema, digest algorithm, rotation concurrency, expiry policy, cookie attributes, and CORS/CSRF details to the integrated `local-login` Design.
+
 ## 11. Current Feature Order
 
 1. Finish the simplified `user-registration` slice.
@@ -184,11 +196,13 @@ None. Feature-level Plans and Designs may choose their smallest implementation i
 | `FOUNDATION-005` | Deferred by `FOUNDATION-006` | Account deletion is optional after the core flow |
 | `FOUNDATION-006` | Approved, clarified | Deployed toy-project scope, optional small acquaintance trial, and representative verification |
 | `FOUNDATION-006-R1` | Approved | Email/password and at least one social signup/login method remain in the core project; social details are feature-owned |
+| `LOCAL-LOGIN-001` | Approved | Adds server-managed Refresh Token persistence, reissue, rotation, and logout revocation to local login without expanding advanced session scope |
 
 ## Version History
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.2.0 | 2026-08-23 | Recorded the limited `LOCAL-LOGIN-001` supersession for Refresh Token persistence and server-side logout revocation |
 | 2.1.0 | 2026-08-14 | Recorded `FOUNDATION-006-R1`: retained both local and social signup/login without expanding the current registration feature |
 | 2.0.1 | 2026-08-14 | Clarified that small voluntary acquaintance use is allowed without introducing commercial service operations |
 | 2.0.0 | 2026-08-14 | Replaced the 980-line service-operations Design with the concise `FOUNDATION-006` personal-use toy-project authority |
