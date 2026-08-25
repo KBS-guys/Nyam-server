@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,9 +22,11 @@ import org.springdoc.webmvc.core.configuration.SpringDocWebMvcConfiguration;
  * 활성화된 OpenAPI 문서가 구현된 회원가입 계약만 안전하게 공개하는지 검증합니다.
  */
 @WebMvcTest(controllers = UserRegistrationController.class, properties = {
+        "NYAM_AUTH_ACCESS_SECRET=QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=",
         "springdoc.api-docs.enabled=true",
         "springdoc.swagger-ui.enabled=true"
 })
+@AutoConfigureMockMvc(addFilters = false)
 @ImportAutoConfiguration(classes = {
         SpringDocConfiguration.class,
         SpringDocConfigProperties.class,

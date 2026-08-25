@@ -14,6 +14,7 @@ import java.util.Base64;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,7 +28,9 @@ import com.nyam.global.exception.ErrorCode;
 /**
  * 이메일 인증 Controller의 성공 봉투, 입력 검증과 공개 오류 매핑을 검증합니다.
  */
-@WebMvcTest(EmailVerificationController.class)
+@WebMvcTest(controllers = EmailVerificationController.class,
+        properties = "NYAM_AUTH_ACCESS_SECRET=QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=")
+@AutoConfigureMockMvc(addFilters = false)
 class EmailVerificationControllerTest {
 
     private static final String EMAIL = "User+tag@Example.COM";

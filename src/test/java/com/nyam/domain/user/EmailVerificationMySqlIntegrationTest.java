@@ -49,8 +49,10 @@ import com.nyam.global.exception.ErrorCode;
 /**
  * 실제 MySQL 8.4.5에서 이메일 인증 Migration, 잠금, 롤백과 proof 전환을 검증합니다.
  */
-@SpringBootTest(properties =
-        "NYAM_EMAIL_VERIFICATION_HMAC_SECRET=QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=")
+@SpringBootTest(properties = {
+        "NYAM_EMAIL_VERIFICATION_HMAC_SECRET=QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=",
+        "NYAM_AUTH_ACCESS_SECRET=QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE="
+})
 @Testcontainers(disabledWithoutDocker = true)
 class EmailVerificationMySqlIntegrationTest {
 

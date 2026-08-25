@@ -23,8 +23,10 @@ import org.testcontainers.utility.DockerImageName;
 /**
  * 실제 MySQL 컨테이너에서 Flyway 적용과 Hibernate 스키마 검증 기반을 확인합니다.
  */
-@SpringBootTest(properties =
-        "NYAM_EMAIL_VERIFICATION_HMAC_SECRET=QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=")
+@SpringBootTest(properties = {
+        "NYAM_EMAIL_VERIFICATION_HMAC_SECRET=QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=",
+        "NYAM_AUTH_ACCESS_SECRET=QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE="
+})
 @Testcontainers(disabledWithoutDocker = true)
 class ProjectFoundationMySqlIntegrationTest {
 
@@ -61,7 +63,7 @@ class ProjectFoundationMySqlIntegrationTest {
 					  AND success = TRUE
 					"""))
 					.as("Successful versioned application migration count")
-					.isEqualTo(2);
+					.isEqualTo(3);
 
 			assertThat(queryCount(connection, """
 					SELECT COUNT(*)
@@ -71,7 +73,7 @@ class ProjectFoundationMySqlIntegrationTest {
 					  AND table_name <> 'flyway_schema_history'
 					"""))
 					.as("Application base table count")
-					.isEqualTo(5);
+					.isEqualTo(6);
 		}
 
 		assertThat("validate".equals(environment.getProperty("spring.jpa.hibernate.ddl-auto")))
