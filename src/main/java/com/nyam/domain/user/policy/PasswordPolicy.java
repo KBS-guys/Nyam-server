@@ -26,10 +26,20 @@ public class PasswordPolicy {
     public String validate(String password) {
         if (password == null
                 || password.length() < MIN_CHARACTERS
-                || password.getBytes(StandardCharsets.UTF_8).length > MAX_UTF8_BYTES) {
+                || !isWithinBcryptByteLimit(password)) {
             throw violation();
         }
         return password;
+    }
+
+    /**
+     * 비밀번호가 BCrypt가 처리할 수 있는 UTF-8 72바이트 이내인지 확인합니다.
+     *
+     * @param password 검사할 평문 비밀번호
+     * @return null이 아니고 UTF-8 기준 최대 바이트 이내이면 {@code true}
+     */
+    public static boolean isWithinBcryptByteLimit(String password) {
+        return password != null && password.getBytes(StandardCharsets.UTF_8).length <= MAX_UTF8_BYTES;
     }
 
     /**

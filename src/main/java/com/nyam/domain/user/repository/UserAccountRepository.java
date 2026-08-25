@@ -1,5 +1,7 @@
 package com.nyam.domain.user.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.nyam.domain.user.model.UserAccount;
@@ -16,4 +18,12 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
      * @return 동일한 정규화 이메일의 계정이 있으면 {@code true}
      */
     boolean existsByCanonicalEmail(String canonicalEmail);
+
+    /**
+     * 정규화 이메일과 일치하는 사용자 계정을 조회합니다.
+     *
+     * @param canonicalEmail 비교할 정규화 이메일
+     * @return 일치하는 사용자 계정 또는 빈 값
+     */
+    Optional<UserAccount> findByCanonicalEmail(String canonicalEmail);
 }

@@ -1,9 +1,9 @@
 # nyamlog-mvp-foundation - Plan Document
 
-> **Version**: 2.1.0 <br>
-> **Date**: 2026-08-14 <br>
+> **Version**: 2.2.0 <br>
+> **Date**: 2026-08-23 <br>
 > **Status**: Approved (Foundation Complete) <br>
-> **Current Scope Decision**: `FOUNDATION-006-R1` <br>
+> **Current Scope Decisions**: `FOUNDATION-006-R1`, `LOCAL-LOGIN-001` <br>
 > **Supersedes**: the limited-deployment and production-readiness assumptions of `FOUNDATION-002-R1`, the first-MVP inclusion of `FOUNDATION-005`, and detailed Foundation clauses that require operational-scale Food/Auth work
 
 ---
@@ -46,7 +46,7 @@ The target flow is intentionally small:
 - Commercial or public-service launch, unrestricted user recruitment, production mail delivery, and guaranteed ongoing operation
 - Mandatory CI/CD, monitoring stacks, alerting, backup automation, high availability, and restore rehearsals
 - Load tests, scale benchmarks, search-engine infrastructure, microservices, Kubernetes, and message brokers
-- Refresh-token rotation, reuse detection, multi-device session management, multiple social providers, automatic local/social account linking, and password reset
+- Refresh-token reuse detection, multi-device session management, multiple social providers, automatic local/social account linking, and password reset
 - Mandatory account-deletion feature for the first completed toy-project flow
 - Repeated food-release synchronization, staging release history, scheduled imports, and operational rollback
 - Advanced ranking, fuzzy search, n-gram tuning, query-plan benchmarking, and concurrent search targets
@@ -76,7 +76,7 @@ Toy-project scope does not remove the following basics:
 | `project-foundation` | Local Spring Boot/MySQL/Flyway/Testcontainers baseline | All features |
 | `email-verification` | Mailpit send, code confirmation, and signup-proof issuance | Final signup exercise |
 | `user-registration` | Final account, credential, consent persistence, and proof consumption | Login |
-| `local-login` | Login, simple Access Token, protected API authentication, and client-side logout | User-owned meals |
+| `local-login` | Login, short-lived Access Token and protected API authentication, server-managed Refresh Token issuance/reissue/rotation, and logout revocation | User-owned meals |
 | `social-login` | At least one provider, provider-subject identity, first-login account creation, and the shared Access Token result | Alternate signup/login method |
 | `food` | One simple import, search, and detail API | Meal recording |
 | `meal` | Authenticated meal create/read/delete and nutrition snapshots | Daily totals |
@@ -115,6 +115,8 @@ Concurrency, performance, failure-injection, and exhaustive contract tests are o
 
 `FOUNDATION-006-R1` supersedes only the social-login deferral in `FOUNDATION-006`. The core toy project keeps both email/password and social signup/login. The first social implementation requires at least one provider; provider selection, callback details, provider-subject schema, duplicate-email conflict, and optional account linking belong to a later bounded `social-login` Plan and Design.
 
+`LOCAL-LOGIN-001` supersedes only the Refresh Token rotation deferral and the minimal `local-login` ownership row. It adds Refresh Token issuance, server validity state, Access Token reissue, rotation, and logout revocation to the bounded local-login flow. Advanced reuse detection and multi-device session management remain deferred.
+
 The older Foundation document contained useful exploration, but its formal invited-tester service operations, commercial-production rollback, scheduled import, search-load, detailed batch, and exhaustive verification clauses are no longer implementation or completion requirements. A simple small deployment remains required.
 
 Existing feature decisions remain only where they support the concise core flow and the stable safety/data rules above. A feature Plan or Design must explicitly simplify an older detailed decision when that decision adds work without advancing a selected learning goal.
@@ -131,11 +133,13 @@ Existing feature decisions remain only where they support the concise core flow 
 | `FOUNDATION-005` | Deferred by `FOUNDATION-006` | Account deletion is not required before the core toy flow is complete |
 | `FOUNDATION-006` | Approved, clarified | Deployed learning toy project for developer use and optional small acquaintance trial; fundamentals take priority over commercial operations, scale, and exhaustive coverage |
 | `FOUNDATION-006-R1` | Approved | Retains both email/password and at least one social signup/login path; detailed provider and account-linking choices remain feature-owned |
+| `LOCAL-LOGIN-001` | Approved | Adds server-managed Refresh Token login persistence to the bounded local-login flow while retaining advanced session features as deferred |
 
 ## Version History
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.2.0 | 2026-08-23 | Recorded the limited `LOCAL-LOGIN-001` supersession for Refresh Token login persistence and local-login ownership |
 | 2.1.0 | 2026-08-14 | Recorded `FOUNDATION-006-R1`: restored social signup/login as a core method while keeping it separate from local registration implementation |
 | 2.0.1 | 2026-08-14 | Clarified that a few acquaintances may voluntarily try the deployed toy project and provide feedback |
 | 2.0.0 | 2026-08-14 | Replaced the external-service premise with a concise personally deployed toy-project boundary through `FOUNDATION-006` |

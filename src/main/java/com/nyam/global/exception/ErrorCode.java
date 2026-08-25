@@ -17,6 +17,12 @@ public enum ErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "E003", "인증이 필요합니다."),
     /** 인증된 사용자가 해당 작업을 수행할 권한이 없는 오류입니다. */
     FORBIDDEN(HttpStatus.FORBIDDEN, "E004", "접근이 거부되었습니다."),
+    /** 이메일 또는 로컬 비밀번호가 일치하지 않는 로그인 실패입니다. */
+    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "LOGIN_FAILED", "이메일 또는 비밀번호를 확인해 주세요."),
+    /** Refresh Token이 없거나 현재 서버 상태와 일치하지 않는 오류입니다. */
+    REFRESH_TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "REFRESH_TOKEN_INVALID", "로그인이 만료되었습니다."),
+    /** 쿠키 기반 인증 요청에 필요한 고정 CSRF 표지가 없는 오류입니다. */
+    CSRF_REQUEST_REJECTED(HttpStatus.FORBIDDEN, "CSRF_REQUEST_REJECTED", "요청을 처리할 수 없습니다."),
 
     /** 정규화 이메일이 이미 등록된 오류입니다. */
     EMAIL_ALREADY_REGISTERED(HttpStatus.CONFLICT, "EMAIL_ALREADY_REGISTERED", "이미 가입된 이메일입니다."),
