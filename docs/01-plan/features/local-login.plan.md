@@ -1,5 +1,7 @@
 # local-login - Plan Document
 
+> **Superseded Notice (`AUTH-SCOPE-REDUCTION-002`)**: Only the statement that signup consumes a `verificationProof` is replaced by direct email-code validation; the Access/Refresh Token, cookie, CSRF, rotation, logout, and concurrent single-winner contracts remain in force. This document remains unchanged as a historical record of the implementation completed at that time.
+
 > **Version**: 1.1.0 <br>
 > **Date**: 2026-08-24 <br>
 > **Status**: Approved <br>

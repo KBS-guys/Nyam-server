@@ -1,13 +1,14 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-08-25T15:12:23.6989504Z",
+  "lastUpdated": "2026-08-27T09:07:52.7930974Z",
   "activeFeatures": [
     "project-foundation",
     "user-registration",
     "email-verification",
-    "local-login"
+    "local-login",
+    "auth-scope-reduction"
   ],
-  "primaryFeature": "local-login",
+  "primaryFeature": "auth-scope-reduction",
   "features": {
     "nyamlog-mvp-foundation": {
       "phase": "completed",
@@ -268,6 +269,65 @@
         "completed": "2026-08-25T15:12:23.6989504Z"
       },
       "completedAt": "2026-08-25T15:12:23.6989504Z"
+    },
+    "auth-scope-reduction": {
+      "phase": "completed",
+      "matchRate": 100,
+      "iterationCount": 1,
+      "documents": {
+        "plan": "docs/01-plan/features/auth-scope-reduction.plan.md",
+        "design": "docs/02-design/features/auth-scope-reduction.design.md",
+        "analysis": "docs/03-analysis/auth-scope-reduction.analysis.md",
+        "report": "docs/04-report/auth-scope-reduction.report.md"
+      },
+      "taskChain": [
+        {
+          "phase": "plan",
+          "status": "completed",
+          "createdAt": "2026-08-27T07:57:58.6544265Z",
+          "completedAt": "2026-08-27T07:57:58.6544265Z"
+        },
+        {
+          "phase": "design",
+          "status": "completed",
+          "createdAt": "2026-08-27T08:16:21.1769498Z",
+          "completedAt": "2026-08-27T08:16:21.1769498Z"
+        },
+        {
+          "phase": "do",
+          "status": "completed",
+          "createdAt": "2026-08-27T08:21:37.1076294Z",
+          "startedAt": "2026-08-27T08:21:37.1076294Z",
+          "completedAt": "2026-08-27T09:07:52.7930974Z"
+        },
+        {
+          "phase": "check",
+          "status": "completed",
+          "createdAt": "2026-08-27T09:07:52.7930974Z",
+          "startedAt": "2026-08-27T09:07:52.7930974Z",
+          "completedAt": "2026-08-27T09:07:52.7930974Z"
+        },
+        {
+          "phase": "act",
+          "status": "completed",
+          "createdAt": "2026-08-27T09:07:52.7930974Z",
+          "startedAt": "2026-08-27T09:07:52.7930974Z",
+          "completedAt": "2026-08-27T09:07:52.7930974Z"
+        },
+        {
+          "phase": "report",
+          "status": "completed",
+          "createdAt": "2026-08-27T09:07:52.7930974Z",
+          "startedAt": "2026-08-27T09:07:52.7930974Z",
+          "completedAt": "2026-08-27T09:07:52.7930974Z"
+        }
+      ],
+      "timestamps": {
+        "started": "2026-08-27T07:57:58.6544265Z",
+        "lastUpdated": "2026-08-27T09:07:52.7930974Z",
+        "completed": "2026-08-27T09:07:52.7930974Z"
+      },
+      "completedAt": "2026-08-27T09:07:52.7930974Z"
     }
   },
   "pipeline": {
@@ -870,6 +930,100 @@
       "iterationCount": 2,
       "scope": "local-login-completed-through-report-no-archive-or-git-publication",
       "timestamp": "2026-08-25T15:12:23.6989504Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "action": "plan_approved",
+      "phase": "plan",
+      "nextPhase": null,
+      "decision": "AUTH-SCOPE-REDUCTION-001",
+      "scope": "integrated-auth-scope-reduction-plan-only-no-design-or-implementation",
+      "timestamp": "2026-08-27T07:57:58.6544265Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "AUTH-SCOPE-REDUCTION-002",
+      "scope": "integrated-auth-scope-reduction-whole-design-no-implementation",
+      "timestamp": "2026-08-27T08:16:21.1769498Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "action": "phase_complete",
+      "phase": "design",
+      "nextPhase": null,
+      "scope": "approved-design-complete-implementation-not-started",
+      "timestamp": "2026-08-27T08:16:21.1769498Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "from": "design",
+      "to": "do",
+      "action": "do_started",
+      "scope": "approved-auth-scope-reduction-implementation-and-verification",
+      "timestamp": "2026-08-27T08:21:37.1076294Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "action": "phase_complete",
+      "phase": "do",
+      "nextPhase": "check",
+      "scope": "approved-auth-flow-simplification-implemented",
+      "timestamp": "2026-08-27T09:07:52.7930974Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "action": "check_analysis_recorded",
+      "phase": "check",
+      "iterationCount": 1,
+      "scope": "initial-check-concurrent-first-send-loser-lock-failure-required-act",
+      "timestamp": "2026-08-27T09:07:52.7930974Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "from": "check",
+      "to": "act",
+      "action": "phase_complete",
+      "phase": "check",
+      "nextPhase": "act",
+      "scope": "initial-check-one-p2-gap-requires-correction",
+      "timestamp": "2026-08-27T09:07:52.7930974Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "action": "check_analysis_recorded",
+      "phase": "check",
+      "matchRate": 100,
+      "iterationCount": 1,
+      "scope": "post-act-design-match-10-of-10-77-tests-no-skips",
+      "timestamp": "2026-08-27T09:07:52.7930974Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "action": "phase_complete",
+      "phase": "act",
+      "nextPhase": "report",
+      "scope": "concurrent-first-send-loser-mapped-to-approved-429-and-reverified",
+      "timestamp": "2026-08-27T09:07:52.7930974Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "from": "act",
+      "to": "report",
+      "action": "report_started",
+      "scope": "auth-scope-reduction-completion-report",
+      "timestamp": "2026-08-27T09:07:52.7930974Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "action": "phase_complete",
+      "phase": "report",
+      "nextPhase": "completed",
+      "matchRate": 100,
+      "iterationCount": 1,
+      "scope": "auth-scope-reduction-completed-no-git-publication-or-stash-access",
+      "timestamp": "2026-08-27T09:07:52.7930974Z"
     }
   ]
 }

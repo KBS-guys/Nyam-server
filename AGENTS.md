@@ -1,199 +1,90 @@
-# bkit Project Configuration
-
-## Project Level
-
-Nyamlog is a Dynamic-level application using a custom Spring Boot and MySQL backend.
-
-- When `bkit_detect_level` is available, call it at session start only to obtain PDCA workflow guidance. If it is unavailable, continue from the project context and approved PDCA documents instead of treating the missing tool as a blocker. Its result does not select or replace the project's architecture or technology stack.
-- Do not introduce bkend.ai or replace the approved Spring Boot and MySQL backend.
-- General bkit templates and skills cannot override Nyamlog's latest approved, non-superseded Plan and Design decisions or project-specific engineering rules.
-- Do not introduce microservices, Kubernetes, distributed message-broker architecture, or production-scale enterprise infrastructure without explicit approval.
-
-## PDCA Status
-
-Check `docs/.pdca-status.json` when:
-
-- Starting or resuming work that may change project files
-- Discussing or changing feature scope or technical decisions
-- Reporting, completing, or transitioning a PDCA phase
-- The current feature or phase materially affects the answer
-
-A status check is not required for simple explanations or questions unrelated to project state.
-
-Use `bkit_get_status` when its session is available and the parsed status is useful. If it is unavailable, read `docs/.pdca-status.json` directly.
-
-Do not initialize or mutate PDCA state merely to answer an unrelated question. Do not invent status, progress, or match-rate values.
-
-## Optional bkit Guidance
-
-- Use bkit tools and skills only when they are available in the current session, and follow their instructions when applicable.
-- Their absence does not override or suspend Nyamlog's project context, approved documents, or engineering rules.
-
-## Response and Completion Reporting
-
-Respond directly and proportionally to the user's request.
-
-For simple questions, explanations, decision discussions, document reviews, and status checks that do not change project state:
-
-- Answer the request directly.
-- Do not append a mandatory PDCA badge, checklist, learning section, tradeoff report, or tool suggestion.
-- Include PDCA context only when it materially helps the answer.
-
-When changing project files, implementing approved work, or changing PDCA state, report the applicable items:
-
-- Active feature and phase, when applicable
-- Files changed
-- Main behavior or decision changed
-- API or database impact, when applicable
-- Tests executed and results
-- Tests not executed, when relevant
-- Known limitations or remaining risks
-- One concrete next step, when follow-up work remains
-
-Do not add empty or irrelevant report sections merely to satisfy a format.
-
-When reporting active PDCA work:
-
-- Use the status recorded in `docs/.pdca-status.json`.
-- Do not invent a progress percentage or match rate when none is recorded.
-- Distinguish document approval, phase completion, and implementation completion.
-- Do not recommend a phase transition until its documented completion conditions are satisfied.
-
-## Complex Feature PDCA Workflow (Single Agent Mode)
-
-When working on complex features:
-1. Break the task into PDCA phases (Plan -> Design -> Do -> Check -> Act when gaps remain -> Report)
-2. Apply the relevant product, architecture, security, implementation, QA, review, and documentation perspectives for each phase.
-3. When `bkit_pdca_next` is available, use it for phase transitions. Otherwise verify and update the approved PDCA documents and `docs/.pdca-status.json` directly within the user's authorized scope.
-4. Enter Act only when Check identifies gaps that require correction. Reanalyze the corrected result before Report.
-5. Quality gates: Each applicable phase must be documented before proceeding.
-
 # Nyamlog Project Instructions
 
-## 0. Project Context
+## 1. Project Context and Decision Authority
 
-- `AGENTS.md` and the PDCA documents under `docs/` are tracked in this repository and may differ by branch or worktree.
-- Before project work, confirm that the current worktree can read `AGENTS.md` and `docs/.pdca-status.json` when the task requires project state.
-- Raw reference artifacts under `docs/reference/` and `data/reference/` may remain local-only and ignored. Do not publish them without explicit approval.
-- `docs/workflow/github-workflow.md` is the repository's detailed GitHub workflow. GitHub templates provide the repository forms but do not replace the decision authority defined here.
+Nyamlog is a Dynamic-level, solo-maintained learning and junior-backend portfolio project built with Spring Boot and MySQL.
 
-## 1. Decision Authority
+- Direct developer use, one small deployment, and limited voluntary trials are in scope. Commercial operation, unrestricted public service, and speculative production-scale infrastructure are not.
+- Do not introduce bkend.ai, microservices, Kubernetes, distributed message brokers, or enterprise infrastructure without explicit approval.
 
-- `AGENTS.md` defines stable agent behavior, safety boundaries, change workflow, and project-wide engineering defaults. It does not own mutable feature scope, detailed technical decisions, or the current implementation state.
-- Read `docs/.pdca-status.json` to identify the active feature and phase before continuing project work.
-- Before proposing or implementing a feature decision, read the applicable Plan, Design, ADR, and decision log.
-- The latest approved, non-superseded Plan, Design, or ADR entry defines what should be implemented for the concern it owns.
-- The current source code, build files, migrations, and configuration define what is implemented now.
-- If the approved target and the current implementation disagree, report the conflict. Do not assume that either side silently overrides the other.
-- Feature-specific Plans and Designs may refine project-wide defaults, but they may not implicitly weaken baseline safeguards such as secret protection, safety boundaries, authenticated ownership enforcement, or user-data isolation.
-- Artifact Audit documents are evidence snapshots. Their recommendations are not approved decisions unless adopted by an approved Plan, Design, or ADR.
-- General bkit skills and templates are workflow suggestions and cannot override Nyamlog-specific decisions or engineering rules.
-- Do not reopen an approved decision merely because another implementation is possible.
-- Reopen a decision only when implementation reveals a concrete contradiction, security or data-integrity problem, unimplementable constraint, or scope disproportionate to the approved portfolio level.
-- When an approved decision should change, propose and record an explicit superseding decision. Do not silently ignore, weaken, or implement around the existing decision.
+- `AGENTS.md` defines stable workflow and safety rules. `docs/.pdca-status.json` identifies the active feature and phase. The latest approved, non-superseded Plan, Design, or ADR defines the target; source code, migrations, configuration, and tests define the current implementation.
+- Read authority files from the current branch or worktree. If the approved target and implementation differ, report the conflict instead of silently choosing one.
+- Feature documents may refine non-safety defaults but cannot weaken secret protection, authenticated ownership, user-data isolation, or protection against silent data corruption.
+- Artifact Audits and general templates are references, not approved decisions. Reopen a decision only for a concrete contradiction, security or data-integrity problem, unimplementable constraint, or scope disproportionate to this project, and record the change as an explicit superseding decision.
+- Raw artifacts under `docs/reference/` and `data/reference/` may be local-only or ignored. Do not publish them without explicit approval.
 
-## 2. Stable Project Constraints
+## 2. Scope and Safety Boundaries
 
-- Nyamlog is a solo-maintained learning toy project that may be used as junior-backend portfolio evidence. Deployment, direct use by the developer, and voluntary trial and feedback from a small number of acquaintances are in scope; commercial launch, exhibition operation, and ongoing service delivery to the general public are not.
-- Current release scope and feature inclusion are determined by the applicable approved, non-superseded Plan, Design, or ADR, not by this file.
-- Prioritize completing one bounded, working vertical flow over expanding adjacent features or speculative infrastructure.
-- Treat PDCA documents as tools for making decisions, guiding implementation, and preserving verification evidence rather than as independent deliverables. Keep them proportional to the bounded feature and avoid repeating the same scope, decision rationale, or test evidence across phases.
-- Once the approved scope and high-cost decisions are clear, spend the majority of feature effort on completing and verifying the working vertical flow.
-- Prefer the smallest secure implementation that satisfies the approved acceptance scenarios.
-- Judge optional work by whether a junior developer can explain it, whether it teaches a backend fundamental, and whether it helps complete the core flow or one small deployment. Defer work that mainly prepares for commercial operation, unrestricted public users, scale, or exhaustive edge-case coverage.
-- Toy-project scope limits feature breadth, operational complexity, and speculative scalability; it does not permit insecure password storage, broken user-data isolation, or silent data corruption.
-- Local verification plus one simple deployment that the developer and a few invited acquaintances can try are sufficient operating evidence. Do not turn that trial deployment into a commercial production-readiness program unless a later approved learning goal requires it.
-- Defer speculative edge cases only when they do not affect security, data integrity, or approved acceptance scenarios.
-- Baseline secret protection, authenticated ownership enforcement, and cross-user data isolation must be preserved.
-- Unknown nutrition values must not be silently converted to zero.
-- Historical meal nutrition must remain independent of later source-food changes.
-- Nutrition guidance must not be represented as medical diagnosis or treatment.
+- Prefer the smallest secure implementation that completes one bounded vertical flow and can be explained by a junior developer.
+- Defer work aimed mainly at commercial operations, unrestricted public users, scale, or exhaustive edge cases. Do not defer issues affecting security, data integrity, or approved acceptance scenarios.
+- Never commit, print, log, or expose passwords, tokens, API keys, database credentials, mail credentials, hashes, verification values, or other secrets. Do not expose stack traces, database errors, or internal exception details to clients.
+- Store passwords with an approved secure encoder; never store or log plaintext passwords.
+- Derive the authenticated user from the SecurityContext and enforce ownership and cross-user isolation for user-owned data.
+- Do not silently corrupt data. Unknown nutrition values must not become zero, historical meal nutrition must remain independent of later source-food changes, and nutrition guidance must not be represented as diagnosis or treatment.
 
-## 3. Repository Verification Rules
+## 3. Engineering and Verification
 
-- Inspect the current source code, build files, migrations, configuration, and tests before describing the implementation state or making changes.
-- Do not rely on `AGENTS.md` for exact framework versions, dependency activation, implemented features, or repository completeness.
-- Verify version-sensitive behavior against the current dependency baseline.
-- For MySQL-specific migrations, persistence behavior, locking, or transaction changes, run the applicable integration tests against the approved actual MySQL baseline. A Docker-unavailable skip is not successful MySQL verification.
-- If the repository differs from an approved target, report the conflict before deciding whether implementation or documentation should change.
+- Inspect the current source, build files, migrations, configuration, and tests before describing implementation state or making changes. Verify version-sensitive behavior against the current dependency baseline.
+- Organize code primarily by business domain. Controllers handle HTTP mapping, validation, delegation, and response construction; keep business rules and data access out of controllers and domain objects. Do not return JPA entities from public APIs.
+- Do not add interfaces, layers, mappers, dependencies, or abstractions without a concrete need.
+- Define transaction boundaries in the service layer, check list and detail queries for N+1 behavior, and review ERD and migration impact before entity or relationship changes. Do not rely on destructive automatic schema generation in production.
 
-## 4. Default Engineering Rules
+### JavaDoc
 
-These rules define baseline safety boundaries and project-wide engineering defaults.
+- When Java source or tests change, write or update Korean JavaDoc where it carries contract or rationale value: public types, major service responsibilities, public API contracts, security or transaction behavior, and non-obvious rules.
+- JavaDoc is not required for self-explanatory constructors, accessors, record components, simple conversion methods, private helpers, or test helpers.
+- Add `@param`, `@return`, and `@throws` only when names and types do not sufficiently explain the contract. Never place sensitive values in documentation or examples.
 
-Applicable Plans, Designs, and ADRs may refine non-safety defaults, but they must not override secret protection, authenticated ownership enforcement, cross-user data isolation, or protections against silent data corruption.
+### Swagger and OpenAPI
 
-If an approved requirement conflicts with a baseline safety boundary, stop and report the conflict for explicit redesign. Do not silently weaken the boundary or implement around it.
+- For public API changes, document the operation purpose, required input constraints, major success and failure outcomes, and sensitive-field boundary.
+- Do not repeat the same policy sentence across Controller, DTO, and test. Keep examples fictitious and non-sensitive; do not define examples or defaults for passwords, proofs, tokens, hashes, secrets, or real personal data.
+- Mark request-only sensitive fields as `writeOnly` and do not expose internal exception or persistence details.
+- OpenAPI contract tests verify paths, fields, status codes, security schemes, and non-exposure of sensitive values rather than exact description wording.
 
-- Organize code primarily by business domain and keep cross-cutting concerns in an appropriately scoped global package.
-- Controllers handle HTTP mapping, validation, delegation, and response construction.
-- Keep business rules out of controllers and data access out of controllers and domain objects.
-- Do not return JPA entities from public APIs; use request and response DTOs at API boundaries.
-- When creating or modifying Java source or test files, add or update Korean JavaDoc in the same change for every declared class, interface, enum, record, constructor, and method.
-- JavaDoc must explain the responsibility or behavior, document every parameter with `@param`, every non-`void` return value with `@return`, and applicable exceptions with `@throws`.
-- Prefer contract, business-rule, and rationale-oriented JavaDoc over line-by-line restatement, and never include passwords, verification proofs, tokens, secrets, or real credentials in comments or examples.
-- When a Controller, request DTO, response DTO, or public enum is included in OpenAPI, add or update Korean Swagger annotations in the same change so Swagger UI explains the operation purpose, field meaning, validation or business constraints, and public HTTP/application response codes.
-- Keep Swagger descriptions aligned with the implemented API and approved Design. Use examples only when they are non-sensitive, fictitious, and stable; never define examples or default values for passwords, verification proofs, tokens, hashes, secrets, or real personal information.
-- Mark request-only sensitive fields as `writeOnly`, do not expose internal exception or persistence details, and extend the OpenAPI contract test when a documented public contract changes.
-- Do not create interfaces, layers, mappers, dependencies, or abstractions without a concrete need.
-- Derive the authenticated user from the security context and enforce ownership of user-owned data.
-- Encode passwords securely and never store or log plaintext passwords.
-- Never commit or print secrets, tokens, API keys, database passwords, OAuth credentials, or mail credentials.
-- Never expose stack traces, database errors, internal exception messages, or secret values to clients.
-- Review ERD and migration impact before changing entities or relationships.
-- Define transaction boundaries in the service layer and check list or detail queries for N+1 behavior.
-- Do not rely on destructive automatic schema generation in production.
+### Verification
+
 - Use `.\gradlew.bat test javadoc` as the standard Windows verification command when Java source or tests change.
-- Add or update tests for changed business behavior and report passed, failed, errored, skipped, and unexecuted tests. When actual MySQL verification is required, confirm that the applicable MySQL integration tests executed rather than being skipped.
-- Do not delete or weaken tests merely to make a build pass.
-- Do not modify unrelated files or overwrite user changes in a dirty worktree.
-- Do not modify `.bkit-codex` source files for project-specific behavior.
-- Do not change the Git tracking policy for configuration, secret, Codex, bkit, or `AGENTS.md` files without explicit approval.
+- Add or update tests for changed behavior and report passed, failed, errored, skipped, and unexecuted tests. Never delete or weaken tests merely to make a build pass.
+- For MySQL-specific migrations, persistence, locking, or transaction behavior, run the applicable integration tests against the approved actual MySQL baseline. A Docker-unavailable skip is not successful MySQL verification.
+- Do not modify unrelated files, overwrite user changes, change `.bkit-codex` source files, or alter tracking policy for configuration, secrets, Codex, bkit, or `AGENTS.md` without explicit approval.
 
-## 5. Approval Required
+## 4. Lean PDCA and Review
 
-The authoritative unresolved-review scope is maintained in the applicable active Design's remaining-decision or consolidated-review section. A task may have no applicable active Design.
+- Check `docs/.pdca-status.json` before changing project files, discussing feature scope or material technical decisions, transitioning a phase, or reporting PDCA completion. Do not mutate it for unrelated questions, draft comments, wording-only review, or reversible implementation details.
+- bkit may assist PDCA progress when available. Its absence is not a blocker; read repository documents directly. bkit output and templates cannot override approved Nyamlog decisions or these project rules.
+- Manage one bounded vertical feature with one concise Plan and one consolidated Design. Do not create a document or approval gate for every endpoint, class, policy value, or test case.
+- Plan records purpose, scope, acceptance scenarios, and material risks. Design records decisions expensive or unsafe to reverse, including public API and validation, database constraints, security and ownership, transaction and concurrency outcomes, external-failure outcomes, and representative verification.
+- Document only decisions required by the current implementation. Exclude unrequested scale, distributed-operation, and future-expansion design.
+- Do not fix class names, Bean configuration, library APIs, internal methods, SQL text, package paths, or test names in Design unless they change an approved contract. Avoid repeating one decision across sections.
+- Aim for roughly 150 lines in Design; this is a readability target, not a hard limit.
+- Analysis records actual gaps and verification evidence. Report is a concise completion record and does not repeat Plan or Design.
+- Whole-Design approval and implementation authorization are separate unless the user explicitly approves both scopes together. After implementation authorization, reversible internal choices inside the approved Design do not require renewed approval.
+- Enter Act only for gaps found during Check. Update PDCA status for phase transitions and material approved decisions, and never invent progress or match-rate values.
+- Stop for explicit redesign when implementation reveals an approved-design conflict, a security or data-integrity problem, an unimplementable requirement, or material scope expansion.
 
-For a bounded feature, default to presenting one complete Design draft before requesting whole-Design approval. Group related policy values and dependent choices by functional concern so the user can review the complete flow and its final failure states together. A list of unresolved concerns defines coverage; it does not require a separate proposal, document mutation, status update, or approval round for every item.
+Review severity has the following single meaning throughout the repository:
 
-Use a standalone Design decision before whole-Design approval only when a choice materially changes schema, public API, security, ownership, transaction behavior, concurrency outcome, external-integration behavior, or feature scope. Numeric policy values and reversible internal choices normally belong in the consolidated Design unless their risk or coupling makes separate approval necessary.
+- **P1:** Data corruption or loss, authentication or authorization bypass, cross-user data exposure or isolation failure, secret exposure, or another critical security or integrity failure.
+- **P2:** A problem that breaks the core flow, public API or schema, transaction or external-failure outcome, or the ability to verify completion.
+- **P3:** A non-blocking improvement to naming, wording, internal structure, optional tests, or optimization.
+- Only P1 and P2 block approval. P3 may be suggested or tracked in an implementation note or follow-up Issue, but must not be an approval condition.
 
-Whole-Design approval and implementation authorization are distinct gates unless the user explicitly approves both exact scopes together.
-
-Before asking for approval or making a design choice:
-
-1. Check the active feature and phase.
-2. Read the applicable Plan, Design, ADR, and decision log.
-3. If an applicable active Design exists, check its remaining-decision or consolidated-review section.
-4. Confirm that the topic is still unresolved and whether it requires standalone approval or belongs in the consolidated draft.
-5. Do not reopen an approved, non-superseded decision without a concrete reason.
-6. Record an approved change as a new superseding decision instead of replacing or ignoring the prior record.
-
-Do not duplicate mutable approved decisions, unresolved-decision lists, or current implementation facts in `AGENTS.md`.
-
-## 6. Change Workflow
-
-- A new feature, material domain-model change, external integration, deployment direction, or cross-cutting architecture change requires an applicable approved Plan and Design before implementation.
-- Implementation already covered by an approved, non-superseded Plan and Design does not require a new foundation-level decision.
-- Small bug fixes, validation changes, DTO adjustments, tests, documentation, and isolated configuration corrections may use a lightweight workflow.
-- A lightweight workflow does not bypass applicable approved decisions, baseline safety boundaries, ownership checks, data-integrity rules, or required verification.
-- Do not create a new PDCA document for every endpoint, class, or minor implementation detail.
-- For one bounded feature or integrated vertical slice, prefer one concise Plan and one consolidated Design. Do not serially gate each endpoint, policy threshold, class, method, library default, or test case as an independent Design decision.
-- Keep the Plan focused on purpose, scope, acceptance scenarios, and material risks; keep the Design focused on decisions that are expensive or unsafe to reverse. Keep Analysis focused on actual gaps and verification evidence, and keep Report as a concise completion record rather than repeating the full Plan and Design.
-- Keep public API meanings and validation, schema constraints, security controls, ownership rules, transaction and concurrency outcomes, external-side-effect failure outcomes, and representative verification scenarios in Design. Defer exact class and method names, exception hierarchy, SQL statement text, test method names, package paths, and other reversible internal choices to implementation unless they change an approved contract.
-- Update PDCA status for phase transitions and material approved decisions. Do not mutate it for draft comments, wording-only review, or reversible implementation details.
-- Implement approved work in small, independently testable increments.
-- After Design approval and implementation authorization, continue through the approved implementation in small increments without requesting new approval for covered internal choices. Stop and report only when implementation reveals a concrete approved-design conflict, security or data-integrity problem, unimplementable constraint, material scope expansion, or a new action that independently requires approval under this file.
-- Propose an explicit superseding decision when an approved Design should change; do not create a new decision merely to record an implementation detail.
-- Verify Figma, API drafts, ERD drafts, and external data against approved decisions. Draft artifacts are not final implementation contracts.
-
-### GitHub Workflow
+## 5. GitHub Workflow and Approval
 
 - Before GitHub work, read `docs/workflow/github-workflow.md` and the repository's applicable Issue and Pull Request templates.
-- Creating an Issue or branch, staging files, committing, pushing, creating or merging a Pull Request, deleting a remote branch, or committing directly to a base branch requires explicit user approval for the exact scope.
+- Creating or editing an Issue, creating a branch or worktree, staging, committing, pushing, creating or merging a Pull Request, deleting a remote branch, or committing directly to a base branch requires explicit user approval for the exact scope.
+- Related Git actions may be approved together when the user explicitly approves the complete scope, such as branch and worktree creation, or approved-path staging, commit, push, and Pull Request creation.
+- Direct base-branch commits and Pull Request merges always require separate approval.
 - Preserve unrelated user changes. In a dirty worktree, stage only explicitly approved paths and never default to staging the entire worktree.
 - Do not present an invented branch naming or commit message convention as an official repository rule.
 - Create the Issue before its work branch. Create the Pull Request after the remote work branch exists, and connect the related Issue with `Close #<issue-number>` when appropriate.
 - Verify the current remote default or requested base branch before creating a work branch. Fetch and prune stale remote refs before starting the next Pull Request when the remote state may have changed.
 - A direct base-branch commit is an exception limited to a precisely approved, low-risk housekeeping change. Feature code and material behavior changes use the Issue and Pull Request workflow.
 - Keep detailed commands, templates, merge guidance, and workflow checklists in `docs/workflow/github-workflow.md`; do not duplicate mutable workflow details here.
+
+## 6. Response and Completion Reporting
+
+- Respond proportionally. Simple explanations and reviews do not need a PDCA badge, checklist, learning section, or tool suggestion.
+- After changing project files or PDCA state, report the applicable feature and phase, changed files, behavior and API or database impact, tests and results, known risks, and one concrete next step.
+- Use recorded PDCA status, distinguish document approval from phase or implementation completion, and do not recommend a phase transition until its completion conditions are satisfied.

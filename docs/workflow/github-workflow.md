@@ -42,14 +42,24 @@ Feature Issue는 API 하나나 정책 값 하나가 아니라 사용자 요청�
 
 ## 2. 작업 브랜치 생성
 
-Issue 범위를 확정한 뒤 원격 상태를 갱신하고 최신 `origin/dev`에서 별도 작업 브랜치와 worktree를 생성합니다.
+Issue 범위를 확정한 뒤 기본 checkout의 변경 상태를 확인합니다. 다른 미완료 변경이 없고 한 기능만 순차적으로 개발한다면 같은 checkout에서 최신 `dev`를 기준으로 작업 브랜치를 생성합니다.
+
+```bash
+git status --short
+git switch dev
+git fetch origin --prune
+git pull --ff-only origin dev
+git switch -c email-verification
+```
+
+기본 checkout에 커밋하지 않은 다른 작업이 있거나 여러 기능을 병렬로 진행해야 할 때만 별도 worktree를 사용합니다. 이때 기존 변경을 임의로 stash하거나 다른 브랜치로 이동하지 않고, 갱신된 `origin/dev`에서 독립된 작업 경로를 만듭니다.
 
 ```bash
 git fetch origin --prune
 git worktree add -b email-verification ../Nyam-server-email-verification origin/dev
 ```
 
-새 worktree는 갱신된 `origin/dev`와 같은 commit에서 시작하므로 기존 dirty worktree를 switch하거나 pull할 필요가 없습니다. 브랜치 이름은 작업 내용을 알아볼 수 있도록 간결하게 작성합니다. 저장소에 강제 규칙은 없으므로 협업자가 이해할 수 있는 이름이면 됩니다.
+브랜치 이름은 작업 내용을 알아볼 수 있도록 간결하게 작성합니다. 저장소에 강제 규칙은 없으므로 협업자가 이해할 수 있는 이름이면 됩니다.
 
 ## 3. 구현과 검증
 
