@@ -1,14 +1,15 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-08-27T11:43:41.1383798Z",
+  "lastUpdated": "2026-08-27T13:49:56.3448215Z",
   "activeFeatures": [
     "project-foundation",
     "user-registration",
     "email-verification",
     "local-login",
-    "auth-scope-reduction"
+    "auth-scope-reduction",
+    "food"
   ],
-  "primaryFeature": "auth-scope-reduction",
+  "primaryFeature": "food",
   "features": {
     "nyamlog-mvp-foundation": {
       "phase": "completed",
@@ -49,7 +50,7 @@
       ],
       "timestamps": {
         "started": "2026-07-27T07:08:04.235Z",
-        "lastUpdated": "2026-08-09T12:57:14.428Z",
+        "lastUpdated": "2026-08-26T00:58:21.3792773Z",
         "completed": "2026-08-05T12:57:23.5152796Z"
       }
     },
@@ -349,6 +350,60 @@
         "completed": "2026-08-27T11:43:41.1383798Z"
       },
       "completedAt": "2026-08-27T11:43:41.1383798Z"
+    },
+    "food": {
+      "phase": "completed",
+      "matchRate": 100,
+      "iterationCount": 1,
+      "documents": {
+        "plan": "docs/01-plan/features/food.plan.md",
+        "design": "docs/02-design/features/food.design.md",
+        "analysis": "docs/03-analysis/food.analysis.md",
+        "report": "docs/04-report/food.report.md"
+      },
+      "taskChain": [
+        {
+          "phase": "plan",
+          "status": "completed",
+          "createdAt": "2026-08-26T14:34:44.9297947Z",
+          "startedAt": "2026-08-26T14:34:44.9297947Z",
+          "completedAt": "2026-08-26T14:58:05.3728864Z"
+        },
+        {
+          "phase": "design",
+          "status": "completed",
+          "createdAt": "2026-08-26T14:58:05.3728864Z",
+          "startedAt": "2026-08-26T14:58:05.3728864Z",
+          "completedAt": "2026-08-27T03:52:28.016403Z"
+        },
+        {
+          "phase": "do",
+          "status": "completed",
+          "createdAt": "2026-08-27T03:54:32.9764299Z",
+          "startedAt": "2026-08-27T03:54:32.9764299Z",
+          "completedAt": "2026-08-27T13:38:54.1556149Z"
+        },
+        {
+          "phase": "check",
+          "status": "completed",
+          "createdAt": "2026-08-27T13:38:54.1556149Z",
+          "startedAt": "2026-08-27T13:38:54.1556149Z",
+          "completedAt": "2026-08-27T13:38:54.1556149Z"
+        },
+        {
+          "phase": "report",
+          "status": "completed",
+          "createdAt": "2026-08-27T13:49:56.3448215Z",
+          "startedAt": "2026-08-27T13:49:56.3448215Z",
+          "completedAt": "2026-08-27T13:49:56.3448215Z"
+        }
+      ],
+      "timestamps": {
+        "started": "2026-08-26T14:34:44.9297947Z",
+        "lastUpdated": "2026-08-27T13:49:56.3448215Z",
+        "completed": "2026-08-27T13:49:56.3448215Z"
+      },
+      "completedAt": "2026-08-27T13:49:56.3448215Z"
     }
   },
   "pipeline": {
@@ -953,6 +1008,62 @@
       "timestamp": "2026-08-25T15:12:23.6989504Z"
     },
     {
+      "feature": "nyamlog-mvp-foundation",
+      "action": "design_decision_approved",
+      "phase": "completed",
+      "decision": "FOUNDATION-006-R2",
+      "scope": "reorder-food-meal-daily-summary-before-social-login-social-remains-pre-deployment-core-requirement",
+      "timestamp": "2026-08-26T00:58:21.3792773Z"
+    },
+    {
+      "feature": "food",
+      "action": "plan_started",
+      "phase": "plan",
+      "scope": "issue-14-approved-plan-draft-created-no-design-or-implementation",
+      "timestamp": "2026-08-26T14:34:44.9297947Z"
+    },
+    {
+      "feature": "food",
+      "action": "plan_approved",
+      "phase": "plan",
+      "nextPhase": "design",
+      "decision": "FOOD-001",
+      "scope": "manual-spring-batch-full-source-import-search-detail-plan-approved",
+      "timestamp": "2026-08-26T14:58:05.3728864Z"
+    },
+    {
+      "feature": "food",
+      "from": "plan",
+      "to": "design",
+      "action": "design_started",
+      "scope": "consolidated-food-design-draft-no-implementation",
+      "timestamp": "2026-08-26T14:58:05.3728864Z"
+    },
+    {
+      "feature": "food",
+      "action": "design_decision_approved",
+      "phase": "design",
+      "decision": "FOOD-002",
+      "scope": "manual-batch-import-restart-persistence-search-detail-whole-design-no-implementation",
+      "timestamp": "2026-08-27T03:52:28.016403Z"
+    },
+    {
+      "feature": "food",
+      "action": "phase_complete",
+      "phase": "design",
+      "nextPhase": null,
+      "scope": "approved-design-complete-implementation-not-started",
+      "timestamp": "2026-08-27T03:52:28.016403Z"
+    },
+    {
+      "feature": "food",
+      "from": "design",
+      "to": "do",
+      "action": "do_started",
+      "scope": "approved-food-manual-import-search-detail-implementation-and-verification",
+      "timestamp": "2026-08-27T03:54:32.9764299Z"
+    },
+    {
       "feature": "auth-scope-reduction",
       "action": "plan_approved",
       "phase": "plan",
@@ -1081,6 +1192,55 @@
       "iterationCount": 2,
       "scope": "pr-16-review-act-completed-no-merge-or-stash-access",
       "timestamp": "2026-08-27T11:43:41.1383798Z"
+    },
+    {
+      "feature": "food",
+      "from": "do",
+      "to": "check",
+      "timestamp": "2026-08-27T13:38:54.1556149Z"
+    },
+    {
+      "feature": "food",
+      "action": "phase_complete",
+      "phase": "do",
+      "nextPhase": "check",
+      "scope": "approved-food-import-search-detail-implementation-and-verification-complete",
+      "timestamp": "2026-08-27T13:38:54.1556149Z"
+    },
+    {
+      "feature": "food",
+      "action": "check_analysis_recorded",
+      "phase": "check",
+      "matchRate": 100,
+      "iterationCount": 1,
+      "scope": "design-match-20-of-20-96-tests-no-skips-full-source-317766",
+      "timestamp": "2026-08-27T13:38:54.1556149Z"
+    },
+    {
+      "feature": "food",
+      "action": "phase_complete",
+      "phase": "check",
+      "nextPhase": "report",
+      "scope": "check-complete-no-act-required-report-not-started",
+      "timestamp": "2026-08-27T13:38:54.1556149Z"
+    },
+    {
+      "feature": "food",
+      "from": "check",
+      "to": "report",
+      "action": "report_started",
+      "scope": "food-completion-report",
+      "timestamp": "2026-08-27T13:49:56.3448215Z"
+    },
+    {
+      "feature": "food",
+      "action": "phase_complete",
+      "phase": "report",
+      "nextPhase": "completed",
+      "matchRate": 100,
+      "iterationCount": 1,
+      "scope": "food-completed-no-archive-git-publication-or-stash-change",
+      "timestamp": "2026-08-27T13:49:56.3448215Z"
     }
   ]
 }
