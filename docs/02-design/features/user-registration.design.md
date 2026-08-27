@@ -1,5 +1,7 @@
 # user-registration - Design Document
 
+> **Superseded Notice (`AUTH-SCOPE-REDUCTION-002`)**: The signup `verificationProof` consumption contract is replaced by direct `email` and `verificationCode` validation. This document remains unchanged as a historical record of the implementation completed at that time.
+
 > **Summary**: Small, transaction-focused account registration for the personally deployed Nyamlog toy project. <br>
 > **Project**: Nyamlog <br>
 > **Version**: 2.0.2 <br>

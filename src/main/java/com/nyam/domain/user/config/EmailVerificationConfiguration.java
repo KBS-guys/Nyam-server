@@ -17,7 +17,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 public class EmailVerificationConfiguration {
 
     /**
-     * 인증번호와 일회성 증명 생성에 사용할 암호학적 난수 생성기를 제공합니다.
+     * 인증번호 생성에 사용할 암호학적 난수 생성기를 제공합니다.
      *
      * @return 운영체제 난수원을 사용하는 안전한 난수 생성기
      */

@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nyam.domain.user.service.UserRegistrationService;
+import com.nyam.domain.user.service.RegisterUserResult;
 import com.nyam.global.common.ApiResponse;
+import com.nyam.global.exception.BusinessException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -38,15 +40,15 @@ public class UserRegistrationController {
     }
 
     /**
-     * 일회성 이메일 검증 증명을 소비하여 로컬 사용자 계정을 생성합니다.
+     * 현재 이메일 인증번호를 직접 검증하여 로컬 사용자 계정을 생성합니다.
      *
-     * @param request 검증 증명, 비밀번호, 생년월일, 필수 동의를 담은 요청
+     * @param request 이메일과 인증번호, 가입 정보, 필수 동의를 담은 요청
      * @return 생성 완료 데이터와 {@code 201 Created} 상태를 담은 공통 응답
     */
     @PostMapping(path = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "로컬 회원가입 완료",
-            description = "이메일 인증 단계에서 발급된 유효한 일회성 증명을 소비하고, 사용자·로컬 자격 증명·필수 동의 정보를 하나의 트랜잭션으로 저장합니다. "
+            description = "메일로 받은 현재 인증번호를 직접 검증하고 사용자·로컬 자격 증명·필수 동의를 하나의 트랜잭션으로 저장합니다. "
                     + "가입 성공 후 자동 로그인하거나 Access Token을 발급하지 않습니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -68,18 +70,25 @@ public class UserRegistrationController {
                             + "`PASSWORD_POLICY_VIOLATION`",
                     content = @Content(schema = @Schema(implementation = ApiResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "429",
+                    description = "인증번호 불일치가 다섯 번 누적되었습니다. 공통 응답 코드: `EMAIL_VERIFICATION_ATTEMPTS_EXCEEDED`",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "500",
                     description = "예상하지 못한 서버 오류입니다. 내부 상세는 공개하지 않습니다. 공통 응답 코드: `INTERNAL_SERVER_ERROR`",
                     content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     public ResponseEntity<ApiResponse<SignupResponse>> signup(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "이메일 인증 증명, 비밀번호, 생년월일, 현재 버전의 필수 동의 세 항목",
+                    description = "인증 이메일과 현재 번호, 비밀번호, 생년월일, 필수 동의 세 항목",
                     required = true)
             @Valid @RequestBody SignupRequest request) {
-        String displayEmail = registrationService.register(request.toCommand());
+        RegisterUserResult result = registrationService.register(request.toCommand());
+        if (result.errorCode() != null) {
+            throw new BusinessException(result.errorCode());
+        }
         ApiResponse<SignupResponse> response = ApiResponse.success(
-                "SIGNUP_COMPLETED", "회원가입이 완료되었습니다.", new SignupResponse(displayEmail));
+                "SIGNUP_COMPLETED", "회원가입이 완료되었습니다.", new SignupResponse(result.displayEmail()));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

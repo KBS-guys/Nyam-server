@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.nyam.domain.user.service.UserRegistrationService;
 
 /**
- * 회원가입 실패 로그에 검증 증명과 비밀번호가 노출되지 않는지 검증합니다.
+ * 회원가입 실패 로그에 인증번호와 비밀번호가 노출되지 않는지 검증합니다.
  */
 @WebMvcTest(controllers = UserRegistrationController.class,
         properties = "NYAM_AUTH_ACCESS_SECRET=QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=")
@@ -27,7 +27,7 @@ import com.nyam.domain.user.service.UserRegistrationService;
 @ExtendWith(OutputCaptureExtension.class)
 class RegistrationSecretLoggingTest {
 
-    private static final String PROOF = "Z".repeat(43);
+    private static final String VERIFICATION_CODE = "739184";
     private static final String PASSWORD = "sentinel-password-987";
 
     @Autowired
@@ -50,17 +50,16 @@ class RegistrationSecretLoggingTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
-                          "verificationProof": "%s",
+                          "email": "user@example.com",
+                          "verificationCode": "%s",
                           "password": "%s",
                           "birthDate": "2000-01-01",
-                          "consents": [
-                            {"type": "TERMS", "version": "1.0"},
-                            {"type": "PERSONAL_INFORMATION", "version": "1.0"},
-                            {"type": "HEALTH_INFORMATION", "version": "1.0"}
-                          ]
+                          "termsAgreed": true,
+                          "personalInformationAgreed": true,
+                          "healthInformationAgreed": true
                         }
-                        """.formatted(PROOF, PASSWORD)));
+                        """.formatted(VERIFICATION_CODE, PASSWORD)));
 
-        assertThat(output.getAll()).doesNotContain(PROOF, PASSWORD, "{bcrypt}");
+        assertThat(output.getAll()).doesNotContain(VERIFICATION_CODE, PASSWORD, "{bcrypt}");
     }
 }

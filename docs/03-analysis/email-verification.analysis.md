@@ -1,5 +1,7 @@
 # email-verification Analysis Report
 
+> **Superseded Notice (`AUTH-SCOPE-REDUCTION-002`)**: The separate code-confirmation and `verificationProof` issuance contracts are replaced by direct verification during signup. This document remains unchanged as a historical record of the implementation completed at that time.
+
 > **Analysis Type**: Gap Analysis <br>
 > **Project**: Nyamlog <br>
 > **Analyst**: Codex <br>

@@ -4,12 +4,16 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.util.Base64;
+import java.util.regex.Pattern;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.nyam.global.exception.BusinessException;
+import com.nyam.global.exception.ErrorCode;
 
 /**
  * 정규화 이메일과 6자리 인증번호를 승인된 HMAC-SHA-256 계약으로 검증합니다.
@@ -20,6 +24,7 @@ public class EmailVerificationCodeVerifier {
     private static final byte[] DOMAIN_PREFIX =
             "nyamlog:email-verification-code:v1".getBytes(StandardCharsets.US_ASCII);
     private static final int MINIMUM_SECRET_BYTES = 32;
+    private static final Pattern CODE_PATTERN = Pattern.compile("[0-9]{6}");
     private final byte[] secret;
 
     /**
@@ -74,5 +79,17 @@ public class EmailVerificationCodeVerifier {
      */
     public boolean matches(String canonicalEmail, String verificationCode, byte[] expectedVerifier) {
         return MessageDigest.isEqual(hash(canonicalEmail, verificationCode), expectedVerifier);
+    }
+
+    /**
+     * 서비스 직접 호출에서도 인증번호의 공개 입력 형식을 검증합니다.
+     *
+     * @param verificationCode 검사할 인증번호
+     * @throws BusinessException 정확히 6자리 ASCII 숫자가 아닌 경우
+     */
+    public void requireValidFormat(String verificationCode) {
+        if (verificationCode == null || !CODE_PATTERN.matcher(verificationCode).matches()) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT);
+        }
     }
 }
