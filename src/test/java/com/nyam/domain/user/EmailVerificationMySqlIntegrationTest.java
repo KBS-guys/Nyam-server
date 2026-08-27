@@ -2,8 +2,10 @@ package com.nyam.domain.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -20,13 +22,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -94,6 +101,9 @@ class EmailVerificationMySqlIntegrationTest {
     @MockitoBean
     Clock clock;
 
+    @MockitoBean
+    PasswordEncoder passwordEncoder;
+
     @BeforeEach
     void setUp() {
         jdbcTemplate.update("DELETE FROM refresh_tokens");
@@ -101,10 +111,11 @@ class EmailVerificationMySqlIntegrationTest {
         jdbcTemplate.update("DELETE FROM local_credentials");
         userRepository.deleteAllInBatch();
         challengeRepository.deleteAllInBatch();
-        reset(mailSender, codeGenerator, clock);
+        reset(mailSender, codeGenerator, clock, passwordEncoder);
         when(clock.instant()).thenReturn(NOW);
         when(clock.getZone()).thenReturn(ZoneOffset.UTC);
         when(codeGenerator.generate()).thenReturn(CODE);
+        when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$test-encoded-password");
     }
 
     @Test
@@ -193,6 +204,99 @@ class EmailVerificationMySqlIntegrationTest {
         }
     }
 
+    @Test
+    void signupCommitBeforeWaitingSendReturnsRegisteredWithoutMailOrChallenge() throws Exception {
+        LocalDateTime initial = LocalDateTime.ofInstant(NOW, ZoneOffset.UTC);
+        challengeRepository.saveAndFlush(new EmailVerificationChallenge(
+                CANONICAL_EMAIL,
+                DISPLAY_EMAIL,
+                codeVerifier.hash(CANONICAL_EMAIL, CODE),
+                initial,
+                initial.plusSeconds(300)));
+
+        CountDownLatch signupReachedEncoder = new CountDownLatch(1);
+        CountDownLatch releaseSignup = new CountDownLatch(1);
+        CountDownLatch sendStarted = new CountDownLatch(1);
+        doAnswer(invocation -> {
+            signupReachedEncoder.countDown();
+            releaseSignup.await(5, TimeUnit.SECONDS);
+            return "$2a$10$test-encoded-password";
+        }).when(passwordEncoder).encode("safe-password");
+
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            Future<RegisterUserResult> signup = executor.submit(() -> registrationService.register(
+                    registrationCommand(CODE)));
+            assertThat(signupReachedEncoder.await(5, TimeUnit.SECONDS)).isTrue();
+
+            Future<ErrorCode> send = executor.submit(() -> {
+                sendStarted.countDown();
+                try {
+                    emailVerificationService.sendCode(DISPLAY_EMAIL);
+                    return null;
+                } catch (BusinessException exception) {
+                    return exception.getErrorCode();
+                }
+            });
+            assertThat(sendStarted.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThatThrownBy(() -> send.get(200, TimeUnit.MILLISECONDS))
+                    .isInstanceOf(TimeoutException.class);
+
+            releaseSignup.countDown();
+            assertThat(signup.get(10, TimeUnit.SECONDS).errorCode()).isNull();
+            ErrorCode sendError = send.get(10, TimeUnit.SECONDS);
+
+            assertThat(sendError).isEqualTo(ErrorCode.EMAIL_ALREADY_REGISTERED);
+            assertThat(sendError.getStatus()).isEqualTo(HttpStatus.CONFLICT);
+            verify(mailSender, never()).send(anyString(), anyString());
+            assertThat(challengeRepository.count()).isZero();
+            assertThat(userRepository.count()).isEqualTo(1);
+        } finally {
+            releaseSignup.countDown();
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    void authenticationSchemaEnforcesRetainedChecksUniquenessAndCascades() {
+        LocalDateTime startedAt = LocalDateTime.ofInstant(NOW, ZoneOffset.UTC);
+
+        assertChallengeRejected("resend@example.com", startedAt, startedAt, startedAt.plusMinutes(5), 4, 0);
+        assertChallengeRejected("failed@example.com", startedAt, startedAt, startedAt.plusMinutes(5), 0, 6);
+        assertChallengeRejected("issue@example.com", startedAt, startedAt.minusSeconds(1),
+                startedAt.plusMinutes(5), 0, 0);
+        assertChallengeRejected("expiry@example.com", startedAt, startedAt, startedAt, 0, 0);
+
+        jdbcTemplate.update("""
+                INSERT INTO users (display_email, canonical_email, birth_date, created_at)
+                VALUES (?, ?, ?, ?)
+                """, "Owner@Example.COM", "owner@example.com", LocalDate.of(2000, 1, 1), startedAt);
+        Long userId = jdbcTemplate.queryForObject(
+                "SELECT user_id FROM users WHERE canonical_email = ?", Long.class, "owner@example.com");
+
+        assertThatThrownBy(() -> jdbcTemplate.update("""
+                INSERT INTO users (display_email, canonical_email, birth_date, created_at)
+                VALUES (?, ?, ?, ?)
+                """, "Duplicate@Example.COM", "owner@example.com", LocalDate.of(2000, 1, 1), startedAt))
+                .isInstanceOf(DataIntegrityViolationException.class);
+
+        jdbcTemplate.update("""
+                INSERT INTO local_credentials (user_id, password_hash, created_at)
+                VALUES (?, ?, ?)
+                """, userId, "$2a$10$test-encoded-password", startedAt);
+        jdbcTemplate.update("""
+                INSERT INTO user_consents (user_id, consent_type, consent_version, agreed_at)
+                VALUES (?, 'TERMS', '1.0', ?)
+                """, userId, startedAt);
+
+        jdbcTemplate.update("DELETE FROM users WHERE user_id = ?", userId);
+
+        assertThat(jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM local_credentials WHERE user_id = ?", Integer.class, userId)).isZero();
+        assertThat(jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM user_consents WHERE user_id = ?", Integer.class, userId)).isZero();
+    }
+
     private String sendAfter(CountDownLatch start) {
         try {
             start.await(5, TimeUnit.SECONDS);
@@ -205,6 +309,41 @@ class EmailVerificationMySqlIntegrationTest {
         } catch (Exception exception) {
             return exception.getClass().getSimpleName();
         }
+    }
+
+    private RegisterUserCommand registrationCommand(String verificationCode) {
+        return new RegisterUserCommand(
+                DISPLAY_EMAIL,
+                verificationCode,
+                "safe-password",
+                LocalDate.of(2000, 1, 1),
+                true,
+                true,
+                true);
+    }
+
+    private void assertChallengeRejected(
+            String canonicalEmail,
+            LocalDateTime verificationStartedAt,
+            LocalDateTime codeIssuedAt,
+            LocalDateTime expiresAt,
+            int resendCount,
+            int failedAttemptCount) {
+        assertThatThrownBy(() -> jdbcTemplate.update("""
+                INSERT INTO email_verification_challenges
+                    (canonical_email, display_email, code_verifier, verification_started_at,
+                     code_issued_at, expires_at, resend_count, failed_attempt_count)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                canonicalEmail,
+                canonicalEmail,
+                new byte[32],
+                verificationStartedAt,
+                codeIssuedAt,
+                expiresAt,
+                resendCount,
+                failedAttemptCount))
+                .isInstanceOf(DataAccessException.class);
     }
 
     private boolean tableExists(String tableName) {

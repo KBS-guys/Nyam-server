@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-08-27T09:07:52.7930974Z",
+  "lastUpdated": "2026-08-27T11:43:41.1383798Z",
   "activeFeatures": [
     "project-foundation",
     "user-registration",
@@ -273,7 +273,7 @@
     "auth-scope-reduction": {
       "phase": "completed",
       "matchRate": 100,
-      "iterationCount": 1,
+      "iterationCount": 2,
       "documents": {
         "plan": "docs/01-plan/features/auth-scope-reduction.plan.md",
         "design": "docs/02-design/features/auth-scope-reduction.design.md",
@@ -320,14 +320,35 @@
           "createdAt": "2026-08-27T09:07:52.7930974Z",
           "startedAt": "2026-08-27T09:07:52.7930974Z",
           "completedAt": "2026-08-27T09:07:52.7930974Z"
+        },
+        {
+          "phase": "act",
+          "status": "completed",
+          "createdAt": "2026-08-27T11:31:14.2619348Z",
+          "startedAt": "2026-08-27T11:31:14.2619348Z",
+          "completedAt": "2026-08-27T11:43:41.1383798Z"
+        },
+        {
+          "phase": "check",
+          "status": "completed",
+          "createdAt": "2026-08-27T11:43:41.1383798Z",
+          "startedAt": "2026-08-27T11:43:41.1383798Z",
+          "completedAt": "2026-08-27T11:43:41.1383798Z"
+        },
+        {
+          "phase": "report",
+          "status": "completed",
+          "createdAt": "2026-08-27T11:43:41.1383798Z",
+          "startedAt": "2026-08-27T11:43:41.1383798Z",
+          "completedAt": "2026-08-27T11:43:41.1383798Z"
         }
       ],
       "timestamps": {
         "started": "2026-08-27T07:57:58.6544265Z",
-        "lastUpdated": "2026-08-27T09:07:52.7930974Z",
-        "completed": "2026-08-27T09:07:52.7930974Z"
+        "lastUpdated": "2026-08-27T11:43:41.1383798Z",
+        "completed": "2026-08-27T11:43:41.1383798Z"
       },
-      "completedAt": "2026-08-27T09:07:52.7930974Z"
+      "completedAt": "2026-08-27T11:43:41.1383798Z"
     }
   },
   "pipeline": {
@@ -1024,6 +1045,42 @@
       "iterationCount": 1,
       "scope": "auth-scope-reduction-completed-no-git-publication-or-stash-access",
       "timestamp": "2026-08-27T09:07:52.7930974Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "from": "completed",
+      "to": "act",
+      "action": "pr_review_gaps_recorded",
+      "iterationCount": 2,
+      "scope": "pr-16-two-p2-gaps-stale-snapshot-and-retained-mysql-invariants",
+      "timestamp": "2026-08-27T11:31:14.2619348Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "action": "check_analysis_recorded",
+      "phase": "check",
+      "matchRate": 100,
+      "iterationCount": 2,
+      "scope": "post-pr-review-act-design-match-10-of-10-79-tests-no-skips",
+      "timestamp": "2026-08-27T11:43:41.1383798Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "action": "phase_complete",
+      "phase": "act",
+      "nextPhase": "report",
+      "scope": "pr-16-two-p2-gaps-corrected-and-reverified",
+      "timestamp": "2026-08-27T11:43:41.1383798Z"
+    },
+    {
+      "feature": "auth-scope-reduction",
+      "action": "phase_complete",
+      "phase": "report",
+      "nextPhase": "completed",
+      "matchRate": 100,
+      "iterationCount": 2,
+      "scope": "pr-16-review-act-completed-no-merge-or-stash-access",
+      "timestamp": "2026-08-27T11:43:41.1383798Z"
     }
   ]
 }

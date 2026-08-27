@@ -76,18 +76,14 @@ public class EmailVerificationService {
     @Transactional
     public EmailVerificationSendResult sendCode(String submittedEmail) {
         NormalizedEmailAddress email = emailCanonicalizer.normalize(submittedEmail);
-        if (userRepository.existsByCanonicalEmail(email.canonicalEmail())) {
-            throw new BusinessException(ErrorCode.EMAIL_ALREADY_REGISTERED);
-        }
-
         try {
-            return sendCodeAfterInitialCheck(email);
+            return sendCodeAfterChallengeLock(email);
         } catch (CannotAcquireLockException exception) {
             throw new BusinessException(ErrorCode.EMAIL_VERIFICATION_SEND_LIMITED);
         }
     }
 
-    private EmailVerificationSendResult sendCodeAfterInitialCheck(NormalizedEmailAddress email) {
+    private EmailVerificationSendResult sendCodeAfterChallengeLock(NormalizedEmailAddress email) {
         Optional<EmailVerificationChallenge> current =
                 challengeRepository.findByCanonicalEmailForUpdate(email.canonicalEmail());
         if (userRepository.existsByCanonicalEmail(email.canonicalEmail())) {

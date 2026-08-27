@@ -27,14 +27,16 @@ signup 성공 시 challenge의 표시 이메일로 사용자 계정을 만들고
 
 실제 MySQL 최초 동시 발송에서 경쟁 패자가 429 대신 잠금 예외로 종료되는 P2 한 건을 발견했다. Act에서 이를 발송 제한 오류로 변환했고, 패자가 상태나 메일을 변경하지 않는 결과를 다시 검증했다.
 
+PR #16 리뷰에서는 발송 트랜잭션의 stale snapshot 경쟁과 유지되어야 할 MySQL 불변식 검증 누락 P2 두 건을 확인했다. 두 번째 Act에서 challenge 잠금 전 사용자 조회를 제거하고 signup 우선 commit 경쟁 결과를 409·메일 0건·challenge 0건으로 고정했다. challenge CHECK 네 건, 사용자 canonical email UNIQUE와 자격 증명·동의 CASCADE도 실제 MySQL 대표 테스트로 복원했다.
+
 최종 Design 대조는 10/10, 100%이며 남은 P1·P2와 후속 관리가 필요한 P3는 없다.
 
 ## 4. 검증
 
 | 항목 | 최종 결과 |
 |------|-----------|
-| `\.\gradlew.bat test javadoc --rerun-tasks` | 성공 |
-| 전체 테스트 | 77 passed, 0 failed, 0 errors, 0 skipped |
+| `.\gradlew.bat test javadoc --rerun-tasks` | 성공 |
+| 전체 테스트 | 79 passed, 0 failed, 0 errors, 0 skipped |
 | 실제 데이터베이스 | MySQL 8.4.5, 신규 설치·V3 업그레이드·트랜잭션·동시성 통과 |
 | Mailpit | 발송 번호를 사용한 직접 signup 통과 |
 | local-login MySQL | 3 passed, 0 skipped |
@@ -47,4 +49,4 @@ signup 성공 시 challenge의 표시 이메일로 사용자 계정을 만들고
 
 ## 6. 완료 경계
 
-`auth-scope-reduction`은 한 번의 Act 교정을 거쳐 Report까지 완료되었다. 이 완료에는 stage, commit, push, Pull Request 생성·병합이나 food stash 접근이 포함되지 않는다.
+`auth-scope-reduction`은 두 번의 Act 교정을 거쳐 Report까지 완료되었고 PR #16에 게시되었다. Pull Request 병합과 food stash 접근은 포함하지 않는다.

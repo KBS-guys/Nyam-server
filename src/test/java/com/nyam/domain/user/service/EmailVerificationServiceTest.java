@@ -2,6 +2,7 @@ package com.nyam.domain.user.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.nyam.domain.user.model.EmailVerificationChallenge;
@@ -67,13 +69,16 @@ class EmailVerificationServiceTest {
     }
 
     @Test
-    void registeredEmailAfterChallengeLockPreventsStaleMail() {
-        when(userRepository.existsByCanonicalEmail(CANONICAL_EMAIL)).thenReturn(false, true);
+    void challengeLockPrecedesTheOnlyRegisteredUserSnapshotRead() {
+        when(userRepository.existsByCanonicalEmail(CANONICAL_EMAIL)).thenReturn(true);
         when(challengeRepository.findByCanonicalEmailForUpdate(CANONICAL_EMAIL))
                 .thenReturn(Optional.empty());
 
         assertError(() -> service.sendCode(DISPLAY_EMAIL), ErrorCode.EMAIL_ALREADY_REGISTERED);
 
+        InOrder order = inOrder(challengeRepository, userRepository);
+        order.verify(challengeRepository).findByCanonicalEmailForUpdate(CANONICAL_EMAIL);
+        order.verify(userRepository).existsByCanonicalEmail(CANONICAL_EMAIL);
         verify(challengeRepository, never()).saveAndFlush(any());
         verify(mailSender, never()).send(any(), any());
     }
