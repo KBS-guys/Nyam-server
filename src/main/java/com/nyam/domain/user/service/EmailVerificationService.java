@@ -5,16 +5,14 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nyam.domain.user.model.EmailVerificationChallenge;
-import com.nyam.domain.user.model.EmailVerificationProof;
 import com.nyam.domain.user.repository.EmailVerificationChallengeRepository;
-import com.nyam.domain.user.repository.EmailVerificationProofRepository;
 import com.nyam.domain.user.repository.UserAccountRepository;
 import com.nyam.global.exception.BusinessException;
 import com.nyam.global.exception.ErrorCode;
@@ -27,19 +25,14 @@ public class EmailVerificationService {
 
     private static final Duration CODE_LIFETIME = Duration.ofMinutes(5);
     private static final Duration RESEND_DELAY = Duration.ofSeconds(60);
-    private static final Duration PROOF_LIFETIME = Duration.ofMinutes(15);
     private static final int MAX_RESENDS = 3;
     private static final int MAX_FAILED_ATTEMPTS = 5;
-    private static final Pattern CODE_PATTERN = Pattern.compile("[0-9]{6}");
 
     private final EmailCanonicalizer emailCanonicalizer;
     private final EmailVerificationCodeGenerator codeGenerator;
     private final EmailVerificationCodeVerifier codeVerifier;
-    private final VerificationProofGenerator proofGenerator;
-    private final VerificationProofHasher proofHasher;
     private final VerificationMailSender mailSender;
     private final EmailVerificationChallengeRepository challengeRepository;
-    private final EmailVerificationProofRepository proofRepository;
     private final UserAccountRepository userRepository;
     private final Clock clock;
 
@@ -49,11 +42,8 @@ public class EmailVerificationService {
      * @param emailCanonicalizer 이메일 입력 경계와 정규화 정책
      * @param codeGenerator 6자리 인증번호 생성기
      * @param codeVerifier 인증번호 HMAC 생성 및 비교기
-     * @param proofGenerator 일회성 증명 원문 생성기
-     * @param proofHasher 기존 회원가입 계약과 같은 증명 해시 생성기
      * @param mailSender 로컬 Mailpit 동기 발송기
      * @param challengeRepository 현재 인증 과제 저장소
-     * @param proofRepository 회원가입 전달용 증명 저장소
      * @param userRepository 가입 이메일 중복 확인 저장소
      * @param clock 발급·만료 판단에 사용할 UTC 시계
      */
@@ -61,21 +51,15 @@ public class EmailVerificationService {
             EmailCanonicalizer emailCanonicalizer,
             EmailVerificationCodeGenerator codeGenerator,
             EmailVerificationCodeVerifier codeVerifier,
-            VerificationProofGenerator proofGenerator,
-            VerificationProofHasher proofHasher,
             VerificationMailSender mailSender,
             EmailVerificationChallengeRepository challengeRepository,
-            EmailVerificationProofRepository proofRepository,
             UserAccountRepository userRepository,
             Clock clock) {
         this.emailCanonicalizer = emailCanonicalizer;
         this.codeGenerator = codeGenerator;
         this.codeVerifier = codeVerifier;
-        this.proofGenerator = proofGenerator;
-        this.proofHasher = proofHasher;
         this.mailSender = mailSender;
         this.challengeRepository = challengeRepository;
-        this.proofRepository = proofRepository;
         this.userRepository = userRepository;
         this.clock = clock;
     }
@@ -92,12 +76,19 @@ public class EmailVerificationService {
     @Transactional
     public EmailVerificationSendResult sendCode(String submittedEmail) {
         NormalizedEmailAddress email = emailCanonicalizer.normalize(submittedEmail);
+        try {
+            return sendCodeAfterChallengeLock(email);
+        } catch (CannotAcquireLockException exception) {
+            throw new BusinessException(ErrorCode.EMAIL_VERIFICATION_SEND_LIMITED);
+        }
+    }
+
+    private EmailVerificationSendResult sendCodeAfterChallengeLock(NormalizedEmailAddress email) {
+        Optional<EmailVerificationChallenge> current =
+                challengeRepository.findByCanonicalEmailForUpdate(email.canonicalEmail());
         if (userRepository.existsByCanonicalEmail(email.canonicalEmail())) {
             throw new BusinessException(ErrorCode.EMAIL_ALREADY_REGISTERED);
         }
-
-        Optional<EmailVerificationChallenge> current =
-                challengeRepository.findByCanonicalEmailForUpdate(email.canonicalEmail());
         LocalDateTime now = currentUtcTime();
         String code = codeGenerator.generate();
         byte[] verifier = codeVerifier.hash(email.canonicalEmail(), code);
@@ -115,49 +106,6 @@ public class EmailVerificationService {
                 email.displayEmail(),
                 expiresAt.toInstant(ZoneOffset.UTC),
                 now.plus(RESEND_DELAY).toInstant(ZoneOffset.UTC));
-    }
-
-    /**
-     * 현재 인증번호를 확인하고 성공 시 challenge를 15분짜리 일회성 proof로 원자적으로 교체합니다.
-     *
-     * <p>불일치 결과는 예외 대신 반환하여 실패 횟수가 커밋된 뒤 웹 계층에서 오류로 변환되게 합니다.</p>
-     *
-     * @param submittedEmail 사용자가 제출한 이메일
-     * @param verificationCode 앞자리 0을 보존한 6자리 인증번호
-     * @return 발급된 proof 또는 커밋 후 반환할 확인 실패 오류
-     * @throws BusinessException 이메일이나 인증번호 표현이 입력 계약을 위반한 경우
-     */
-    @Transactional
-    public EmailVerificationConfirmationResult confirmCode(String submittedEmail, String verificationCode) {
-        NormalizedEmailAddress email = emailCanonicalizer.normalize(submittedEmail);
-        requireCodeFormat(verificationCode);
-
-        Optional<EmailVerificationChallenge> current =
-                challengeRepository.findByCanonicalEmailForUpdate(email.canonicalEmail());
-        LocalDateTime now = currentUtcTime();
-        if (current.isEmpty()) {
-            return EmailVerificationConfirmationResult.failure(ErrorCode.EMAIL_VERIFICATION_INVALID);
-        }
-
-        EmailVerificationChallenge challenge = current.orElseThrow();
-        if (!now.isBefore(challenge.getExpiresAt())) {
-            return EmailVerificationConfirmationResult.failure(ErrorCode.EMAIL_VERIFICATION_INVALID);
-        }
-        if (challenge.getFailedAttemptCount() >= MAX_FAILED_ATTEMPTS) {
-            return EmailVerificationConfirmationResult.failure(
-                    ErrorCode.EMAIL_VERIFICATION_ATTEMPTS_EXCEEDED);
-        }
-        if (!codeVerifier.matches(challenge.getCanonicalEmail(), verificationCode,
-                challenge.getCodeVerifier())) {
-            challenge.recordMismatch();
-            challengeRepository.flush();
-            ErrorCode error = challenge.getFailedAttemptCount() >= MAX_FAILED_ATTEMPTS
-                    ? ErrorCode.EMAIL_VERIFICATION_ATTEMPTS_EXCEEDED
-                    : ErrorCode.EMAIL_VERIFICATION_INVALID;
-            return EmailVerificationConfirmationResult.failure(error);
-        }
-
-        return issueProof(challenge, now);
     }
 
     /**
@@ -201,47 +149,6 @@ public class EmailVerificationService {
             throw new BusinessException(ErrorCode.EMAIL_VERIFICATION_SEND_LIMITED);
         }
         challenge.resend(displayEmail, verifier, issuedAt, expiresAt);
-    }
-
-    /**
-     * 성공한 인증 과제를 삭제하고 기존 미소비 proof를 새 proof로 교체합니다.
-     *
-     * @param challenge 확인에 성공한 잠금 상태
-     * @param now proof 발급 기준 시각
-     * @return 새 원문 proof와 만료 시각을 가진 성공 결과
-     */
-    private EmailVerificationConfirmationResult issueProof(
-            EmailVerificationChallenge challenge, LocalDateTime now) {
-        String rawProof = proofGenerator.generate();
-        byte[] proofHash = proofHasher.hash(rawProof);
-        LocalDateTime proofExpiresAt = now.plus(PROOF_LIFETIME);
-
-        challengeRepository.delete(challenge);
-        challengeRepository.flush();
-        proofRepository.findByCanonicalEmailForUpdate(challenge.getCanonicalEmail())
-                .ifPresent(proofRepository::delete);
-        proofRepository.flush();
-        proofRepository.saveAndFlush(new EmailVerificationProof(
-                proofHash,
-                challenge.getDisplayEmail(),
-                challenge.getCanonicalEmail(),
-                now,
-                proofExpiresAt));
-
-        return EmailVerificationConfirmationResult.success(
-                rawProof, proofExpiresAt.toInstant(ZoneOffset.UTC));
-    }
-
-    /**
-     * 서비스 직접 호출에서도 인증번호 표현 계약을 강제합니다.
-     *
-     * @param verificationCode 검사할 인증번호
-     * @throws BusinessException 정확히 6자리 ASCII 숫자가 아닌 경우
-     */
-    private void requireCodeFormat(String verificationCode) {
-        if (verificationCode == null || !CODE_PATTERN.matcher(verificationCode).matches()) {
-            throw new BusinessException(ErrorCode.INVALID_INPUT);
-        }
     }
 
     /**

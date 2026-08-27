@@ -1,32 +1,37 @@
 package com.nyam.domain.user.web;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import com.nyam.domain.user.service.RegisterUserCommand;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 
 /**
  * 이메일 확인을 마친 사용자가 로컬 계정 생성을 위해 제출하는 최종 요청입니다.
  *
- * @param verificationProof 이메일 확인 후 발급된 일회성 증명
+ * @param email 인증번호를 발급받은 이메일
+ * @param verificationCode 메일로 받은 현재 6자리 인증번호
  * @param password 사용자가 설정할 평문 비밀번호
  * @param birthDate 가입 연령 확인에 사용할 생년월일
- * @param consents 필수 동의 세 항목
+ * @param termsAgreed 서비스 이용약관 동의 여부
+ * @param personalInformationAgreed 개인정보 수집·이용 동의 여부
+ * @param healthInformationAgreed 건강정보 처리 동의 여부
  */
-@Schema(description = "이메일 인증을 완료한 사용자가 로컬 계정 생성을 위해 제출하는 최종 회원가입 요청")
+@Schema(description = "메일로 받은 현재 인증번호를 직접 검증해 로컬 계정을 생성하는 요청")
 public record SignupRequest(
         @NotNull
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED, maxLength = 254, format = "email",
+                description = "인증번호를 발급받은 ASCII 이메일입니다. challenge 조회에는 소문자 canonical identity를 사용합니다.")
+        String email,
+
+        @NotNull
+        @Pattern(regexp = "[0-9]{6}")
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY, requiredMode = Schema.RequiredMode.REQUIRED,
-                minLength = 43, maxLength = 43, pattern = "[A-Za-z0-9_-]{43}",
-                description = "이메일 인증 완료 후 발급되는 43자 URL-safe Base64 형식의 일회성 증명입니다. "
-                        + "서버가 검증된 이메일을 이 증명에서 확인하므로 요청에 이메일을 별도로 제출하지 않습니다. "
-                        + "값이 제출되었지만 형식이 잘못된 경우에도 인증 실패와 동일한 422 응답을 반환합니다.")
-        String verificationProof,
+                minLength = 6, maxLength = 6, pattern = "[0-9]{6}",
+                description = "메일로 받은 정확히 6자리 ASCII 숫자이며 로그나 응답에 노출하지 않습니다.")
+        String verificationCode,
 
         @NotNull
         @Schema(accessMode = Schema.AccessMode.WRITE_ONLY, requiredMode = Schema.RequiredMode.REQUIRED,
@@ -41,12 +46,16 @@ public record SignupRequest(
         LocalDate birthDate,
 
         @NotNull
-        @Size(min = 3, max = 3)
-        @Valid
-        @Schema(requiredMode = Schema.RequiredMode.REQUIRED,
-                description = "현재 버전의 서비스 이용약관, 개인정보 수집·이용, 건강정보 처리 동의를 각각 한 번씩 제출합니다. "
-                        + "정확히 세 항목이어야 하며 중복이나 누락은 허용하지 않습니다.")
-        List<ConsentRequest> consents) {
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "서비스 이용약관 필수 동의 여부")
+        Boolean termsAgreed,
+
+        @NotNull
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "개인정보 수집·이용 필수 동의 여부")
+        Boolean personalInformationAgreed,
+
+        @NotNull
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "건강정보 처리 필수 동의 여부")
+        Boolean healthInformationAgreed) {
 
     /**
      * 검증된 HTTP 요청을 회원가입 서비스 명령으로 변환합니다.
@@ -55,10 +64,13 @@ public record SignupRequest(
      */
     RegisterUserCommand toCommand() {
         return new RegisterUserCommand(
-                verificationProof,
+                email,
+                verificationCode,
                 password,
                 birthDate,
-                consents.stream().map(ConsentRequest::toAgreement).toList());
+                termsAgreed,
+                personalInformationAgreed,
+                healthInformationAgreed);
     }
 
     /**
@@ -68,7 +80,9 @@ public record SignupRequest(
      */
     @Override
     public String toString() {
-        return "SignupRequest[verificationProof=<redacted>, password=<redacted>, birthDate="
-                + birthDate + ", consentCount=" + (consents == null ? 0 : consents.size()) + "]";
+        return "SignupRequest[email=" + email + ", verificationCode=<redacted>, password=<redacted>, birthDate="
+                + birthDate + ", termsAgreed=" + termsAgreed
+                + ", personalInformationAgreed=" + personalInformationAgreed
+                + ", healthInformationAgreed=" + healthInformationAgreed + "]";
     }
 }

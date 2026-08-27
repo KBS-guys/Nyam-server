@@ -1,5 +1,7 @@
 # email-verification - Plan Document
 
+> **Superseded Notice (`AUTH-SCOPE-REDUCTION-002`)**: The separate code-confirmation and `verificationProof` issuance contracts are replaced by direct verification during signup. This document remains unchanged as a historical record of the implementation completed at that time.
+
 > **Summary**: Provide the minimum Mailpit email-verification flow that issues a one-time verificationProof consumed by the existing signup API. <br>
 > **Project**: Nyamlog <br>
 > **Version**: 1.1.0 <br>

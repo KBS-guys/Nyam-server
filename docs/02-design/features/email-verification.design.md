@@ -1,5 +1,7 @@
 # email-verification - Design Document
 
+> **Superseded Notice (`AUTH-SCOPE-REDUCTION-002`)**: The separate code-confirmation and `verificationProof` issuance contracts are replaced by direct verification during signup. This document remains unchanged as a historical record of the implementation completed at that time.
+
 > **Summary**: Define the minimal Mailpit email-verification flow through a consolidated, security-focused Design review. <br>
 > **Project**: Nyamlog <br>
 > **Version**: 1.0.0 <br>

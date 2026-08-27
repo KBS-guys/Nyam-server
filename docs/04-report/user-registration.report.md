@@ -1,5 +1,7 @@
 # user-registration Completion Report
 
+> **Superseded Notice (`AUTH-SCOPE-REDUCTION-002`)**: The signup `verificationProof` consumption contract is replaced by direct `email` and `verificationCode` validation. This document remains unchanged as a historical record of the implementation completed at that time.
+
 > **Status**: Complete <br>
 > **Project**: Nyamlog <br>
 > **Completion Date**: 2026-08-15 <br>
