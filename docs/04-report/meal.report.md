@@ -27,7 +27,9 @@
 
 ## 3. Check 결과
 
-승인된 Design 22개 계약을 최종 구현과 대조한 결과 **22/22, 100%**가 일치했다. 구현 누락, 승인되지 않은 기능 확장과 남은 P1·P2·P3 gap은 없어 Act를 수행하지 않았다.
+승인된 Design 22개 계약을 최초 구현과 대조한 결과 **22/22, 100%**가 일치했다. 이후 PR #19 리뷰에서 `items: [null]`이 DTO 변환 중 예외를 일으켜 승인된 `400 INVALID_INPUT` 대신 500이 될 수 있는 P2를 확인해 두 번째 iteration의 Act를 수행했다.
+
+item container element에 `@NotNull`을 적용하고, null item 요청이 서비스 호출 전에 `INVALID_INPUT`으로 거절되는 웹 회귀 테스트를 추가했다. 재분석 결과는 다시 22/22, 100%이며 남은 P1·P2·P3 gap은 없다.
 
 구현 중 실제 MySQL Hibernate validation이 `item_position SMALLINT`와 Java `int`의 불일치를 발견했다. Java 필드를 `short`로 수정한 뒤 fresh migration과 validation을 재실행해 해결했다.
 
@@ -38,8 +40,8 @@ rollback 테스트는 추가 DB 권한이 필요한 trigger 대신 두 번째 it
 | 항목 | 최종 결과 |
 |------|-----------|
 | `.\gradlew.bat test javadoc` | 성공 |
-| 전체 테스트 | 35 suites, 116 passed, 0 failed, 0 errors, 0 skipped, 0 unexecuted |
-| meal 단위·Web·OpenAPI | 14 passed, 0 skipped |
+| 전체 테스트 | 35 suites, 117 passed, 0 failed, 0 errors, 0 skipped, 0 unexecuted |
+| meal 단위·Web·OpenAPI | 15 passed, 0 skipped |
 | `MealMySqlIntegrationTest` | 3 passed, MySQL 8.4.5, 0 skipped |
 | JavaDoc | 성공 |
 | `git diff --check` | 공백 오류 없음 |
@@ -59,6 +61,7 @@ rollback 테스트는 추가 DB 권한이 필요한 trigger 대신 두 번째 it
 
 - Java 숫자 타입과 MySQL `SMALLINT`의 차이는 단위 테스트만으로 드러나지 않았다.
 - Docker 미가동 시 Testcontainers skip이 발생할 수 있으므로 일반 빌드 성공만 완료 증거로 사용할 수 없었다.
+- cascaded `@Valid`만으로는 collection의 null 원소를 거절하지 않으므로 container element 제약이 별도로 필요했다.
 
 ### Try
 
@@ -67,6 +70,6 @@ rollback 테스트는 추가 DB 권한이 필요한 trigger 대신 두 번째 it
 
 ## 6. 완료 경계와 다음 단계
 
-meal은 Plan, Design, Do, Check와 Report까지 완료했다. 상세·수정 API, meal 합계, `daily-summary`, social-login, 프론트엔드와 운영·확장 기능은 이번 완료 범위에 포함하지 않는다.
+meal은 PR 리뷰 Act와 두 번째 재검증을 거쳐 Plan, Design, Do, Check와 Report까지 재완료했다. 상세·수정 API, meal 합계, `daily-summary`, social-login, 프론트엔드와 운영·확장 기능은 이번 완료 범위에 포함하지 않는다.
 
-다음 작업 순서는 별도 승인에 따른 meal 변경 경로의 stage·commit·push·Pull Request 생성 및 검토다. merge와 Issue 종료 뒤에는 다음 기능인 `daily-summary`를 별도 Issue와 PDCA 범위로 시작한다. Archive와 Git 게시 작업은 이 Report 작성에 포함하지 않는다.
+다음 작업 순서는 별도 승인에 따른 이번 수정 5개 경로의 stage·commit·push로 기존 PR #19를 업데이트하는 것이다. merge와 Issue 종료 뒤에는 다음 기능인 `daily-summary`를 별도 Issue와 PDCA 범위로 시작한다. Archive와 Git 게시 작업은 이 Report 작성에 포함하지 않는다.

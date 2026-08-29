@@ -52,28 +52,29 @@
 | 검증 | 결과 |
 |------|------|
 | `.\gradlew.bat test javadoc` | 성공 |
-| 전체 테스트 | 35 suites, 116 passed, 0 failed, 0 errors, 0 skipped, 0 unexecuted |
-| meal 단위·Web·OpenAPI | 14 passed, 0 skipped |
+| 전체 테스트 | 35 suites, 117 passed, 0 failed, 0 errors, 0 skipped, 0 unexecuted |
+| meal 단위·Web·OpenAPI | 15 passed, 0 skipped |
 | `MealMySqlIntegrationTest` | 3 passed, MySQL 8.4.5, 0 skipped |
 | JavaDoc | 성공 |
 | `git diff --check` | 공백 오류 없음 |
 
 실제 MySQL 검증은 V1부터 V7까지의 fresh migration과 Hibernate validation, snapshot 변경 독립성, 소유권 격리, 결정적 nested 정렬, 단일 목록 statement, item 실패 전체 rollback, binary 단위 CHECK, meal별 food UNIQUE, meal·user cascade와 food RESTRICT를 포함한다.
 
-## 4. 구현 중 발견·해결 사항
+## 4. 발견·해결 사항
 
 | 심각도 | 발견 사항 | 해결 및 최종 증거 |
 |--------|-----------|-------------------|
 | P2 | 최초 실제 MySQL Hibernate validation에서 `item_position SMALLINT`와 Java `int` 매핑 불일치 | `MealItem.itemPosition`을 `short`로 맞추고 fresh migration·Hibernate validation을 재실행하여 통과 |
+| P2 | PR #19 리뷰에서 `items: [null]`이 DTO 변환 중 예외를 일으켜 `500 INTERNAL_SERVER_ERROR`가 될 수 있음 | item container element에 `@NotNull`을 적용하고 서비스 미호출·`400 INVALID_INPUT` 웹 회귀 테스트 추가 |
 
 rollback 검증은 권한 의존적인 DB trigger 대신 두 번째 item의 실제 CHECK 위반을 강제하는 방식으로 구성했다. 이는 승인된 transaction 결과를 실제 MySQL에서 검증하면서 운영 권한이나 새 schema 객체를 요구하지 않는다.
 
 ## 5. Gap과 비차단 관찰
 
-- 최종 재검토에서 남은 P1·P2·P3 구현 gap은 없다.
+- 두 번째 iteration의 PR 리뷰 Act 후 남은 P1·P2·P3 구현 gap은 없다.
 - meal 전체 영양 합계, `daily-summary`, 상세·수정 API, social-login 구현과 운영·확장 기능은 승인 범위 밖이며 추가하지 않았다.
 - Docker 미가동 시 skip되었던 중간 결과는 완료 증거에서 제외했다. 최종 실제 MySQL XML은 3 passed, 0 skipped다.
 
 ## 6. Check 결론
 
-첫 번째 Check iteration에서 `MEAL-002` 구현 일치율은 100%이며 Act가 필요하지 않다. meal은 Check 완료 조건을 충족했고 completion Report 작성 전 승인 경계에 있다. stage, commit, push와 Pull Request는 수행하지 않았다.
+두 번째 iteration의 PR 리뷰 Act와 재분석 결과 `MEAL-002` 구현 일치율은 다시 22/22, 100%다. null item도 서비스 호출 전에 승인된 `400 INVALID_INPUT`으로 처리되며 meal은 Report까지 재완료했다. stage, commit, push와 Pull Request 업데이트는 수행하지 않았다.

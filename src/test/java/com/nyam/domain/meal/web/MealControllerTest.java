@@ -110,6 +110,21 @@ class MealControllerTest {
         verify(mealService, never()).create(anyLong(), any());
     }
 
+    /** null item 요청은 DTO 변환 전에 INVALID_INPUT으로 거절하는지 확인합니다. */
+    @Test
+    void rejectsNullCreateItem() throws Exception {
+        mockMvc.perform(post("/api/v1/meals")
+                        .header(HttpHeaders.AUTHORIZATION, bearerToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"mealDate":"2026-08-29","items":[null]}
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_INPUT"));
+
+        verify(mealService, never()).create(anyLong(), any());
+    }
+
     /** 날짜별 목록이 JWT 소유자와 요청 날짜를 서비스에 전달하는지 확인합니다. */
     @Test
     void listsOnlyBearerOwnersDate() throws Exception {

@@ -28,7 +28,7 @@ public record CreateMealRequest(
         @Valid
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED,
                 description = "서로 다른 food 식별자와 해당 기준 단위의 섭취량 목록")
-        List<Item> items) {
+        List<@NotNull Item> items) {
 
     /** 서비스가 사용할 HTTP 독립 생성 입력으로 변환합니다. */
     public CreateMealCommand toCommand() {
