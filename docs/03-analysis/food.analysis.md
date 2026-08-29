@@ -23,13 +23,13 @@
 | # | Design 계약 | 구현·검증 근거 | 결과 |
 |---|-------------|----------------|------|
 | 1 | 전체 원본을 수동 Job으로 적재하고 일반 API 시작과 분리 | `foodImport` Gradle task, `FoodImportApplication`, `food-import` profile, 일반 시작 시 Job 미실행 MySQL 테스트 | Match |
-| 2 | UTF-8 BOM과 정확한 45개 헤더·필드 매핑 | `FoodCsvSchema`, `FoodCsvFileSupport`, `FoodCsvRow`, CSV 계약 테스트 | Match |
+| 2 | UTF-8 BOM과 전체 파일 strict UTF-8, 정확한 45개 헤더·필드 매핑 | `FoodImportPreflightTasklet`, `FoodCsvSchema`, `FoodCsvFileSupport`, malformed UTF-8 회귀 테스트 | Match |
 | 3 | 입력 경로·release date·checksum을 요구하되 경로는 비영속 처리 | `FoodImportRunner`, `FoodImportInput`, 정확히 두 식별 Parameter 검증 | Match |
 | 4 | 영속 JDBC JobRepository와 지정 JDBC Batch transaction manager 사용 | `FoodBatchInfrastructureConfiguration`, Job·Step 구성, 실제 MySQL의 영속 Repository 검증 | Match |
-| 5 | Flyway가 Batch 메타데이터를 만들고 Batch 자동 초기화를 금지 | V5 Migration, `spring.batch.jdbc.initialize-schema=never`, Hibernate validation | Match |
+| 5 | Flyway가 Batch 메타데이터를 만들고 Batch 자동 초기화를 금지 | V5 Migration, 추적되는 `food-batch-defaults.properties`, `FoodBatchInfrastructureConfiguration`, Hibernate validation | Match |
 | 6 | 최소 `foods` 스키마와 외부 코드·유형·기준량·단위·음수 방지 제약 | V6 Migration, `Food` JPA mapping, 실제 MySQL 제약 검증 | Match |
 | 7 | `BigDecimal` scale 4, 무반올림, 공란 `NULL`, 잘못된 숫자 fail-fast | `FoodImportProcessor`, `FoodCsvContractTest`, MySQL nullable·정밀도 검증 | Match |
-| 8 | 쓰기 전 파일·checksum·헤더·release date preflight | `FoodImportPreflightTasklet`, 매 실행 preflight Step | Match |
+| 8 | 쓰기 전 파일·checksum·전체 UTF-8·헤더·release date preflight | `FoodImportPreflightTasklet`, 매 실행 preflight Step, 501개 정상 행 뒤 malformed UTF-8의 쓰기 전 실패 검증 | Match |
 | 9 | 전체 행을 보유하지 않는 streaming Reader와 구조 오류 실패 | `FoodCsvItemReader`, `FoodCsvParser`, quoted field·multiline·field-count 테스트 | Match |
 | 10 | 외부 코드·유형·식품명·기준량 검증과 검색명 정규화 | `FoodImportProcessor`, `FoodNameNormalizer`, 단위 테스트 | Match |
 | 11 | JDBC batch upsert, null-safe 비교, 변경 시에만 `updated_at` 갱신 | `FoodImportJobConfiguration` Writer SQL과 실제 MySQL no-op upsert 검증 | Match |
@@ -40,24 +40,34 @@
 | 16 | 완료 동일 입력 거절, 새 release·checksum 실행, 외부 코드 upsert | 완료 입력 거절과 새 release/새 checksum MySQL 테스트 | Match |
 | 17 | 검색·상세 API에 기존 Bearer 인증 적용 | `FoodController` 보안 계약과 unauthorized 웹 테스트 | Match |
 | 18 | 정규화 prefix 검색, 최대 20건, 결정적 정렬, 안전한 상세·오류·단위 | `FoodQueryService`, `FoodRepository`, 응답 DTO, Controller 테스트 | Match |
-| 19 | 한국어 OpenAPI와 대표 단위·웹·실제 MySQL 자동 검증 | food 테스트 17건과 전체 96건, 실패·오류·skip 없음 | Match |
+| 19 | 한국어 OpenAPI와 대표 단위·웹·실제 MySQL 자동 검증 | food 테스트 19건과 전체 98건, 실패·오류·skip 없음 | Match |
 | 20 | 317,766건 전체 원본 수동 실행과 비밀·원문·로컬 경로 비보존 | 전체 Job·Step 완료, DB 행·외부 코드 유일성·nullable count 확인, Git 변경 경로 점검 | Match |
 
 최종 일치율은 **20/20, 100%**다. 구현 누락, 승인되지 않은 기능 확장 또는 Design과 다른 공개 계약은 확인되지 않았다.
+
+### 2.1 PR 리뷰 gap과 Act
+
+초기 완료 판정 뒤 PR #17 리뷰에서 다음 gap을 확인해 기존 20/20 판정을 일시적으로 무효화하고 두 번째 iteration의 Act를 수행했다.
+
+| 심각도 | 확인된 gap | Act 결과 |
+|--------|------------|-----------|
+| P2 | preflight가 strict UTF-8로 헤더만 읽어 본문 인코딩 오류 전에 앞선 chunk가 커밋될 수 있음 | preflight가 전체 파일을 EOF까지 strict UTF-8로 스트리밍하고, 501개 정상 행 뒤 malformed byte fixture가 validation Step에서만 실패하며 `foods=0`임을 실제 MySQL에서 검증 |
+| P3 | 예상 가능한 파일 I/O 예외 cause가 framework stack trace에 로컬 경로를 남길 수 있음 | preflight와 Reader의 파일 I/O 실패를 고정 메시지로 변환하고 cause를 전달하지 않으며 로그 캡처 회귀 테스트 추가 |
+| P3 | ignored `application.yml`의 Batch 설정을 구현 근거로 기록 | 비밀값이 없는 `food-batch-defaults.properties`를 추적하고 Batch 구성에서 명시적으로 로드하도록 수정 |
 
 ## 3. 자동 검증 결과
 
 | 검증 | 결과 |
 |------|------|
 | `.\gradlew.bat test javadoc --rerun-tasks` | 성공 |
-| 전체 테스트 | 31 suites, 96 passed, 0 failed, 0 errors, 0 skipped, 0 unexecuted |
-| food 단위·서비스·웹·OpenAPI | 14 passed, 0 skipped |
-| `FoodBatchMySqlIntegrationTest` | 3 passed, MySQL 8.4.5, 0 skipped |
+| 전체 테스트 | 31 suites, 98 passed, 0 failed, 0 errors, 0 skipped, 0 unexecuted |
+| food 단위·서비스·웹·OpenAPI | 15 passed, 0 skipped |
+| `FoodBatchMySqlIntegrationTest` | 4 passed, MySQL 8.4.5, 0 skipped |
 | 다른 실제 MySQL·Mailpit 회귀 | 16 passed, 0 skipped |
 | JavaDoc | 성공 |
 | `git diff --check` | 공백 오류 없음 |
 
-실제 MySQL 검증은 V1부터 V6까지의 fresh migration, Hibernate validation, Batch metadata 영속화, nullable·UNIQUE·CHECK 제약, chunk rollback, checkpoint restart와 완료 입력 거절을 포함한다.
+실제 MySQL 검증은 V1부터 V6까지의 fresh migration, Hibernate validation, Batch metadata 영속화, nullable·UNIQUE·CHECK 제약, chunk rollback, checkpoint restart, 완료 입력 거절과 전체 파일 UTF-8 preflight를 포함한다.
 
 ## 4. 전체 원본 수동 실행
 
@@ -73,11 +83,11 @@
 
 ## 5. Gap과 비차단 관찰
 
-- 남은 P1·P2 구현 gap은 없다.
+- PR 리뷰 Act 이후 남은 P1·P2 구현 gap은 없다.
 - 승인된 Design은 현재 문서 작성 지침보다 구현·테스트 방법을 상세히 고정하지만, 이는 동작 불일치가 아닌 P3 문서 비례성 관찰이다. 승인된 역사 문서를 재작성하거나 별도 Design 개정을 만들지 않는다.
 - Flyway는 MySQL 8.4가 당시 공식 시험 상한 8.1보다 새 버전이라는 경고를 출력했다. 실제 기준 버전 MySQL 8.4.5의 migration과 모든 적용 테스트는 통과했으므로 차단 gap으로 보지 않는다.
 - 정확한 최대 메모리 계측은 승인된 완료 조건이 아니며 수행하지 않았다. streaming 구조와 전체 원본 완료 결과로 메모리 전체 적재 금지를 검증했다.
 
 ## 6. Check 결론
 
-`FOOD-002`의 구현 일치율은 100%이고 Act가 필요한 gap은 없다. food Check는 완료되었으며 다음 단계는 별도 승인 후 Report 작성이다. stage, commit, push, Pull Request와 stash 변경은 이 Check 범위에 포함하지 않는다.
+두 번째 iteration의 Act와 재분석 결과 `FOOD-002` 구현 일치율은 다시 100%다. food는 Report까지 재완료했으며 stage, commit, push, Pull Request 업데이트와 stash 변경은 이번 수정 범위에 포함하지 않는다.

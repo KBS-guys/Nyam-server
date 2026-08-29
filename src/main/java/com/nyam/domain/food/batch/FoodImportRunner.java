@@ -1,5 +1,6 @@
 package com.nyam.domain.food.batch;
 
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -71,7 +72,11 @@ public class FoodImportRunner implements ApplicationRunner {
             throw new IllegalArgumentException("Food import checksum must be a SHA-256 value");
         }
 
-        input.configure(Path.of(pathValue));
+        try {
+            input.configure(Path.of(pathValue));
+        } catch (InvalidPathException | SecurityException exception) {
+            throw new IllegalArgumentException("Food import path is invalid");
+        }
         JobParameters parameters = new JobParametersBuilder()
                 .addString(RELEASE_DATE_PARAMETER, releaseDateValue, true)
                 .addString(CHECKSUM_PARAMETER, checksum, true)

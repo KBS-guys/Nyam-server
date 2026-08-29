@@ -6,6 +6,7 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.support.JdbcTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -17,6 +18,7 @@ import jakarta.persistence.EntityManagerFactory;
  */
 @Configuration
 @EnableBatchProcessing(dataSourceRef = "dataSource", transactionManagerRef = "batchTransactionManager")
+@PropertySource("classpath:food-batch-defaults.properties")
 public class FoodBatchInfrastructureConfiguration {
 
     /**

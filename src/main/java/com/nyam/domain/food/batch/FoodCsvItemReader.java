@@ -46,7 +46,7 @@ public class FoodCsvItemReader implements ItemStreamReader<FoodCsvRow> {
             }
         } catch (IOException | RuntimeException exception) {
             closeQuietly();
-            throw new ItemStreamException("Food CSV Reader could not restore its checkpoint", exception);
+            throw new ItemStreamException("Food CSV Reader could not restore its checkpoint");
         }
     }
 
@@ -58,7 +58,12 @@ public class FoodCsvItemReader implements ItemStreamReader<FoodCsvRow> {
      */
     @Override
     public FoodCsvRow read() throws Exception {
-        String line = reader.readLine();
+        String line;
+        try {
+            line = reader.readLine();
+        } catch (IOException exception) {
+            throw new FoodImportException("Food CSV Reader could not read the input");
+        }
         if (line == null) {
             return null;
         }
@@ -90,7 +95,7 @@ public class FoodCsvItemReader implements ItemStreamReader<FoodCsvRow> {
         try {
             reader.close();
         } catch (IOException exception) {
-            throw new ItemStreamException("Food CSV Reader could not close", exception);
+            throw new ItemStreamException("Food CSV Reader could not close");
         } finally {
             reader = null;
         }

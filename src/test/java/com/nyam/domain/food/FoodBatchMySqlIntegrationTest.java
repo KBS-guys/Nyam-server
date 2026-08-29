@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -259,6 +260,29 @@ class FoodBatchMySqlIntegrationTest {
         assertThat(restartedChunk.getReadCount()).isEqualTo(2);
         assertThat(restartedChunk.getWriteCount()).isEqualTo(2);
         assertThat(count("foods")).isEqualTo(502);
+    }
+
+    /**
+     * 첫 chunk보다 뒤에 잘못된 UTF-8 바이트가 있어도 preflight가 전체 파일을 검사해 쓰기 전에 실패하는지 확인합니다.
+     *
+     * @throws Exception fixture 생성 또는 Job 실행에 실패한 경우
+     */
+    @Test
+    void rejectsMalformedUtf8BeforeAnyFoodWrite() throws Exception {
+        List<String> rows = new ArrayList<>();
+        for (int sequence = 1; sequence <= 501; sequence++) {
+            rows.add(row(sequence, "테스트 식품 " + sequence, "100g", "1", "2", "3", "4"));
+        }
+        Path csv = writeCsv("malformed-utf8.csv", rows);
+        Files.write(csv, new byte[] {'\n', (byte) 0xC3, '('}, StandardOpenOption.APPEND);
+
+        JobExecution failed = launch(csv, parameters(csv, "2026-06-26"));
+
+        assertThat(failed.getStatus()).isEqualTo(BatchStatus.FAILED);
+        assertThat(failed.getStepExecutions())
+                .extracting(StepExecution::getStepName)
+                .containsExactly(FoodImportJobConfiguration.VALIDATION_STEP_NAME);
+        assertThat(count("foods")).isZero();
     }
 
     /**

@@ -19,7 +19,8 @@
 
 - Spring Batch 의존성과 수동 `foodImport` 실행 task를 추가했다.
 - V5는 Spring Batch 5.2.4의 MySQL 메타데이터를, V6는 `foods` 테이블·제약·검색 인덱스를 생성한다.
-- 일반 애플리케이션 시작에서는 Batch Job을 자동 실행하지 않으며 Batch 스키마는 Flyway만 관리한다.
+- 추적되는 안전 기본 설정으로 일반 애플리케이션의 Batch Job 자동 실행과 Batch 스키마 자동 초기화를 금지하고, 스키마는 Flyway만 관리한다.
+- preflight는 checksum뿐 아니라 전체 파일을 strict UTF-8로 끝까지 검사해 지원하지 않는 인코딩을 food 쓰기 전에 거절한다.
 - release date와 checksum으로 Job Instance를 식별하고, 실패 실행은 영속 checkpoint에서 restart하며 완료 동일 입력은 거절한다.
 - `source_food_code` 기준 null-safe upsert는 실제 값이 변경된 경우에만 `updated_at`을 갱신한다.
 - `GET /api/v1/foods/search`와 `GET /api/v1/foods/{foodId}`를 추가하고 한국어 OpenAPI·안전한 오류 응답을 제공한다.
@@ -27,7 +28,9 @@
 
 ## 3. Check와 Act
 
-승인된 Design을 20개 계약으로 대조한 결과 20/20, 100% 일치했다. 구현 누락, 승인되지 않은 범위 확장과 남은 P1·P2가 없어 Act는 수행하지 않았다.
+초기 완료 뒤 PR #17 리뷰에서 전체 파일 UTF-8 preflight P2와 경로 로그·추적 설정 P3 두 건을 확인해 두 번째 iteration의 Act를 수행했다. 전체 strict UTF-8 preflight, malformed byte 실제 MySQL 회귀 테스트, I/O cause 경로 비노출과 추적 가능한 Batch 기본 설정을 반영했다.
+
+Act 후 승인된 Design 20개 계약을 다시 대조한 결과 20/20, 100%이며 남은 P1·P2는 없다.
 
 Design이 현재 문서 지침보다 구현·테스트 방법을 세밀하게 기록한 점은 P3 문서 비례성 관찰로 남겼다. 승인된 역사 문서를 재작성하거나 별도 Design 개정을 만들지는 않았다.
 
@@ -36,9 +39,9 @@ Design이 현재 문서 지침보다 구현·테스트 방법을 세밀하게 �
 | 항목 | 최종 결과 |
 |------|-----------|
 | `.\gradlew.bat test javadoc --rerun-tasks` | 성공 |
-| 전체 테스트 | 31 suites, 96 passed, 0 failed, 0 errors, 0 skipped, 0 unexecuted |
-| food 자동 테스트 | 17 passed, 0 skipped |
-| `FoodBatchMySqlIntegrationTest` | 3 passed, MySQL 8.4.5, 0 skipped |
+| 전체 테스트 | 31 suites, 98 passed, 0 failed, 0 errors, 0 skipped, 0 unexecuted |
+| food 자동 테스트 | 19 passed, 0 skipped |
+| `FoodBatchMySqlIntegrationTest` | 4 passed, MySQL 8.4.5, 0 skipped |
 | 다른 실제 MySQL·Mailpit 회귀 | 16 passed, 0 skipped |
 | JavaDoc | 성공 |
 | `git diff --check` | 공백 오류 없음 |
@@ -57,4 +60,4 @@ Flyway는 MySQL 8.4가 당시 시험된 상한 8.1보다 새 버전이라는 경
 
 ## 6. 완료 경계
 
-food는 Plan, Design, Do, Check와 Report까지 완료되었다. Archive, meal 기능, stage, commit, push, Pull Request와 stash 변경은 이 완료 범위에 포함하지 않는다.
+food는 PR 리뷰 Act와 재검증을 거쳐 Plan, Design, Do, Check와 Report까지 다시 완료되었다. Archive, meal 기능, stage, commit, push, Pull Request 업데이트와 stash 변경은 이 완료 범위에 포함하지 않는다.

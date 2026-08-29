@@ -15,7 +15,7 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
 /**
- * 식품 쓰기 전에 파일·checksum·날짜·정확한 헤더를 반복 검증합니다.
+ * 식품 쓰기 전에 파일·checksum·날짜·전체 UTF-8 인코딩과 정확한 헤더를 반복 검증합니다.
  */
 public class FoodImportPreflightTasklet implements Tasklet {
 
@@ -65,9 +65,12 @@ public class FoodImportPreflightTasklet implements Tasklet {
             }
             try (BufferedReader reader = FoodCsvFileSupport.openStrictUtf8(path)) {
                 FoodCsvFileSupport.requireExactHeader(reader.readLine());
+                while (reader.readLine() != null) {
+                    // 전체 파일을 strict UTF-8로 끝까지 읽어 쓰기 전 인코딩 계약을 검증합니다.
+                }
             }
         } catch (IOException exception) {
-            throw new FoodImportException("Food CSV preflight could not read the input", exception);
+            throw new FoodImportException("Food CSV preflight could not read the input");
         }
         return RepeatStatus.FINISHED;
     }

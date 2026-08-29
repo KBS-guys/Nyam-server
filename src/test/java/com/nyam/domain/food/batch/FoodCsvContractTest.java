@@ -2,6 +2,7 @@ package com.nyam.domain.food.batch;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,15 +14,22 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 
 /**
  * 식품 CSV 구조, 행 변환과 Reader 체크포인트 계약을 단위 수준에서 검증합니다.
  */
+@ExtendWith(OutputCaptureExtension.class)
 class FoodCsvContractTest {
 
     private static final Clock CLOCK = Clock.fixed(Instant.parse("2026-08-27T00:00:00Z"), ZoneOffset.UTC);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FoodCsvContractTest.class);
 
     @TempDir
     Path temporaryDirectory;
@@ -130,6 +138,25 @@ class FoodCsvContractTest {
         assertThat(restarted.read().sourceFoodCode()).isEqualTo(code(3));
         assertThat(restarted.read()).isNull();
         restarted.close();
+    }
+
+    /**
+     * Reader의 예상 가능한 파일 열기 실패가 stack trace를 통해 로컬 입력 경로를 노출하지 않는지 확인합니다.
+     *
+     * @param output 테스트 중 캡처한 애플리케이션 로그
+     */
+    @Test
+    void readerOpenFailureDoesNotExposeLocalPath(CapturedOutput output) {
+        Path missingCsv = temporaryDirectory.resolve("private-food-source.csv").toAbsolutePath();
+        FoodImportInput input = new FoodImportInput();
+        input.configure(missingCsv);
+        FoodCsvItemReader reader = new FoodCsvItemReader(input);
+
+        Throwable failure = catchThrowable(() -> reader.open(new ExecutionContext()));
+        assertThat(failure).isInstanceOf(org.springframework.batch.item.ItemStreamException.class);
+        LOGGER.error("Food CSV Reader failed", failure);
+
+        assertThat(output).doesNotContain(missingCsv.toString());
     }
 
     /**
