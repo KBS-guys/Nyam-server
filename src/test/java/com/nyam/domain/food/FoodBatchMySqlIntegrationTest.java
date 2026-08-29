@@ -122,6 +122,14 @@ class FoodBatchMySqlIntegrationTest {
         assertThat(jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM flyway_schema_history WHERE version IN ('5', '6') AND success = TRUE",
                 Long.class)).isEqualTo(2L);
+        assertThat(jdbcTemplate.queryForList("""
+                SELECT COLLATION_NAME
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME = 'foods'
+                  AND COLUMN_NAME IN ('food_name', 'normalized_name')
+                ORDER BY COLUMN_NAME
+                """, String.class)).containsExactly("utf8mb4_0900_bin", "utf8mb4_0900_bin");
     }
 
     /**
@@ -208,6 +216,39 @@ class FoodBatchMySqlIntegrationTest {
 
         assertThatThrownBy(() -> launch(csv, parameters))
                 .isInstanceOf(JobInstanceAlreadyCompleteException.class);
+    }
+
+    /**
+     * 표시명의 대소문자 차이를 실제 변경으로 기록하고 검색은 Java 정규화에 없는 악센트 등가성을 추가하지 않는지 확인합니다.
+     *
+     * @throws Exception fixture 생성 또는 Job 실행에 실패한 경우
+     */
+    @Test
+    void updatesCaseOnlyNameChangeAndKeepsAccentSearchExact() throws Exception {
+        Path originalCsv = writeCsv("name-original.csv", List.of(
+                row(1, "ABC", "100g", "1", "2", "3", "4"),
+                row(2, "café", "100g", "1", "2", "3", "4")));
+        JobExecution original = launch(originalCsv, parameters(originalCsv, "2026-06-26"));
+        assertThat(original.getStatus()).isEqualTo(BatchStatus.COMPLETED);
+        LocalDateTime originalUpdatedAt = jdbcTemplate.queryForObject(
+                "SELECT updated_at FROM foods WHERE source_food_code = ?", LocalDateTime.class, code(1));
+
+        Path changedCsv = writeCsv("name-changed.csv", List.of(
+                row(1, "abc", "100g", "1", "2", "3", "4"),
+                row(2, "café", "100g", "1", "2", "3", "4")));
+        JobExecution changed = launch(changedCsv, parameters(changedCsv, "2026-06-27"));
+
+        assertThat(changed.getStatus()).isEqualTo(BatchStatus.COMPLETED);
+        assertThat(jdbcTemplate.queryForObject(
+                "SELECT food_name FROM foods WHERE source_food_code = ?", String.class, code(1)))
+                .isEqualTo("abc");
+        assertThat(jdbcTemplate.queryForObject(
+                "SELECT updated_at FROM foods WHERE source_food_code = ?", LocalDateTime.class, code(1)))
+                .isAfter(originalUpdatedAt);
+        assertThat(foodQueryService.search("cafe")).isEmpty();
+        assertThat(foodQueryService.search("café"))
+                .extracting(food -> food.getFoodName())
+                .containsExactly("café");
     }
 
     /**

@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-08-27T14:28:10.6076443Z",
+  "lastUpdated": "2026-08-29T07:22:06.3516390Z",
   "activeFeatures": [
     "project-foundation",
     "user-registration",
@@ -354,7 +354,7 @@
     "food": {
       "phase": "completed",
       "matchRate": 100,
-      "iterationCount": 2,
+      "iterationCount": 3,
       "documents": {
         "plan": "docs/01-plan/features/food.plan.md",
         "design": "docs/02-design/features/food.design.md",
@@ -417,14 +417,35 @@
           "createdAt": "2026-08-27T14:28:10.6076443Z",
           "startedAt": "2026-08-27T14:28:10.6076443Z",
           "completedAt": "2026-08-27T14:28:10.6076443Z"
+        },
+        {
+          "phase": "act",
+          "status": "completed",
+          "createdAt": "2026-08-29T07:22:06.3516390Z",
+          "startedAt": "2026-08-29T07:22:06.3516390Z",
+          "completedAt": "2026-08-29T07:22:06.3516390Z"
+        },
+        {
+          "phase": "check",
+          "status": "completed",
+          "createdAt": "2026-08-29T07:22:06.3516390Z",
+          "startedAt": "2026-08-29T07:22:06.3516390Z",
+          "completedAt": "2026-08-29T07:22:06.3516390Z"
+        },
+        {
+          "phase": "report",
+          "status": "completed",
+          "createdAt": "2026-08-29T07:22:06.3516390Z",
+          "startedAt": "2026-08-29T07:22:06.3516390Z",
+          "completedAt": "2026-08-29T07:22:06.3516390Z"
         }
       ],
       "timestamps": {
         "started": "2026-08-26T14:34:44.9297947Z",
-        "lastUpdated": "2026-08-27T14:28:10.6076443Z",
-        "completed": "2026-08-27T14:28:10.6076443Z"
+        "lastUpdated": "2026-08-29T07:22:06.3516390Z",
+        "completed": "2026-08-29T07:22:06.3516390Z"
       },
-      "completedAt": "2026-08-27T14:28:10.6076443Z"
+      "completedAt": "2026-08-29T07:22:06.3516390Z"
     }
   },
   "pipeline": {
@@ -1298,6 +1319,42 @@
       "iterationCount": 2,
       "scope": "food-pr-review-act-completed-no-git-publication-or-stash-change",
       "timestamp": "2026-08-27T14:28:10.6076443Z"
+    },
+    {
+      "feature": "food",
+      "from": "completed",
+      "to": "act",
+      "action": "pr_review_gaps_recorded",
+      "iterationCount": 3,
+      "scope": "pr-17-p2-name-collation-updated-at-and-search-equivalence-gap",
+      "timestamp": "2026-08-29T07:22:06.3516390Z"
+    },
+    {
+      "feature": "food",
+      "action": "check_analysis_recorded",
+      "phase": "check",
+      "matchRate": 100,
+      "iterationCount": 3,
+      "scope": "post-pr-review-act-design-match-20-of-20-99-tests-no-skips-mysql-5-of-5",
+      "timestamp": "2026-08-29T07:22:06.3516390Z"
+    },
+    {
+      "feature": "food",
+      "action": "phase_complete",
+      "phase": "act",
+      "nextPhase": "report",
+      "scope": "pr-17-name-collation-gap-corrected-and-reverified",
+      "timestamp": "2026-08-29T07:22:06.3516390Z"
+    },
+    {
+      "feature": "food",
+      "action": "phase_complete",
+      "phase": "report",
+      "nextPhase": "completed",
+      "matchRate": 100,
+      "iterationCount": 3,
+      "scope": "food-third-review-act-completed-no-git-publication-or-stash-change",
+      "timestamp": "2026-08-29T07:22:06.3516390Z"
     }
   ]
 }

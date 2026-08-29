@@ -1,8 +1,8 @@
 CREATE TABLE foods (
     food_id BIGINT NOT NULL AUTO_INCREMENT,
     source_food_code VARCHAR(19) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
-    food_name VARCHAR(500) NOT NULL,
-    normalized_name VARCHAR(500) NOT NULL,
+    food_name VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_bin NOT NULL,
+    normalized_name VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_bin NOT NULL,
     food_type CHAR(1) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
     basis_amount DECIMAL(12,4) NOT NULL,
     basis_unit VARCHAR(8) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
