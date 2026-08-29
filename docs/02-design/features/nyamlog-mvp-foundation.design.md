@@ -1,10 +1,10 @@
 # nyamlog-mvp-foundation - Design Document
 
-> **Version**: 2.2.0 <br>
-> **Date**: 2026-08-23 <br>
+> **Version**: 2.3.0 <br>
+> **Date**: 2026-08-26 <br>
 > **Status**: Approved (Foundation Complete) <br>
 > **Plan**: `docs/01-plan/features/nyamlog-mvp-foundation.plan.md` <br>
-> **Current Design Decisions**: `FOUNDATION-006-R1`, `LOCAL-LOGIN-001`
+> **Current Design Decisions**: `FOUNDATION-006-R1`, `FOUNDATION-006-R2`, `LOCAL-LOGIN-001`
 
 ---
 
@@ -157,7 +157,17 @@ Older verbose Foundation sections are superseded by this concise Design and are 
 - Do not expand the current local `user-registration` transaction with OAuth callback or provider API logic.
 - Defer provider selection, provider credentials, provider-subject schema, email collision, and account-linking rules to the bounded `social-login` Plan and Design.
 
-### 10.2 `LOCAL-LOGIN-001` - Persistent Local Login
+### 10.2 `FOUNDATION-006-R2` - Core Domain Before Social Login
+
+**Status:** Approved 2026-08-26 <br>
+**Supersedes:** Only the remaining feature implementation order in section 11
+
+- Complete the bounded `food`, `meal`, and `daily-summary` features before implementing `social-login`.
+- Keep at least one social signup/login provider as a core project requirement under `FOUNDATION-006-R1`.
+- Complete `social-login` before final end-to-end Swagger verification and personal deployment.
+- Do not combine food, meal, daily summary, social login, or account deletion into one feature scope.
+
+### 10.3 `LOCAL-LOGIN-001` - Persistent Local Login
 
 **Status:** Approved 2026-08-23 <br>
 **Supersedes:** Only the Refresh Token rotation deferral and client-only logout clause in section 4
@@ -170,13 +180,13 @@ Older verbose Foundation sections are superseded by this concise Design and are 
 
 ## 11. Current Feature Order
 
-1. Finish the simplified `user-registration` slice.
-2. Implement local Mailpit email verification and login as one bounded authentication flow.
-3. Implement one bounded social signup/login provider using the same internal authentication result.
-4. Implement simple food import, search, and detail.
-5. Implement authenticated meal create/read/delete with snapshots.
-6. Implement daily major-nutrient totals.
-7. Run the complete flow through Swagger, fix defects, deploy one personal instance, and document startup.
+The project foundation, email verification, user registration, and local login slices are complete. The remaining feature order is:
+
+1. Implement simple food import, search, and detail.
+2. Implement authenticated meal create/read/delete with snapshots.
+3. Implement daily major-nutrient totals.
+4. Implement one bounded social signup/login provider using the same internal authentication result.
+5. Run the complete flow through Swagger, fix defects, deploy one personal instance, and document startup.
 
 Account deletion and every deferred concern are optional follow-up maintenance work.
 
@@ -196,12 +206,14 @@ None. Feature-level Plans and Designs may choose their smallest implementation i
 | `FOUNDATION-005` | Deferred by `FOUNDATION-006` | Account deletion is optional after the core flow |
 | `FOUNDATION-006` | Approved, clarified | Deployed toy-project scope, optional small acquaintance trial, and representative verification |
 | `FOUNDATION-006-R1` | Approved | Email/password and at least one social signup/login method remain in the core project; social details are feature-owned |
+| `FOUNDATION-006-R2` | Approved | Completes food, meal, and daily summary before social login while retaining social login as a pre-deployment core requirement |
 | `LOCAL-LOGIN-001` | Approved | Adds server-managed Refresh Token persistence, reissue, rotation, and logout revocation to local login without expanding advanced session scope |
 
 ## Version History
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.3.0 | 2026-08-26 | Recorded `FOUNDATION-006-R2`: reordered the remaining features around the core food and meal flow while retaining social login |
 | 2.2.0 | 2026-08-23 | Recorded the limited `LOCAL-LOGIN-001` supersession for Refresh Token persistence and server-side logout revocation |
 | 2.1.0 | 2026-08-14 | Recorded `FOUNDATION-006-R1`: retained both local and social signup/login without expanding the current registration feature |
 | 2.0.1 | 2026-08-14 | Clarified that small voluntary acquaintance use is allowed without introducing commercial service operations |

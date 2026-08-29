@@ -43,6 +43,8 @@ public enum ErrorCode {
     REQUIRED_CONSENT_MISSING(HttpStatus.UNPROCESSABLE_ENTITY, "REQUIRED_CONSENT_MISSING", "필수 동의 항목을 확인해 주세요."),
     /** 비밀번호가 길이 또는 문자 인코딩 정책을 위반한 오류입니다. */
     PASSWORD_POLICY_VIOLATION(HttpStatus.UNPROCESSABLE_ENTITY, "PASSWORD_POLICY_VIOLATION", "비밀번호 정책을 충족하지 않습니다."),
+    /** 요청한 식품을 찾을 수 없는 오류입니다. */
+    FOOD_NOT_FOUND(HttpStatus.NOT_FOUND, "FOOD_NOT_FOUND", "식품을 찾을 수 없습니다."),
     // USER
     /** 요청한 사용자를 찾을 수 없는 오류입니다. */
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "사용자를 찾을 수 없습니다.");

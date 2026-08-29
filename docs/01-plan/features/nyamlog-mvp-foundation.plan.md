@@ -1,9 +1,9 @@
 # nyamlog-mvp-foundation - Plan Document
 
-> **Version**: 2.2.0 <br>
-> **Date**: 2026-08-23 <br>
+> **Version**: 2.3.0 <br>
+> **Date**: 2026-08-26 <br>
 > **Status**: Approved (Foundation Complete) <br>
-> **Current Scope Decisions**: `FOUNDATION-006-R1`, `LOCAL-LOGIN-001` <br>
+> **Current Scope Decisions**: `FOUNDATION-006-R1`, `FOUNDATION-006-R2`, `LOCAL-LOGIN-001` <br>
 > **Supersedes**: the limited-deployment and production-readiness assumptions of `FOUNDATION-002-R1`, the first-MVP inclusion of `FOUNDATION-005`, and detailed Foundation clauses that require operational-scale Food/Auth work
 
 ---
@@ -115,6 +115,8 @@ Concurrency, performance, failure-injection, and exhaustive contract tests are o
 
 `FOUNDATION-006-R1` supersedes only the social-login deferral in `FOUNDATION-006`. The core toy project keeps both email/password and social signup/login. The first social implementation requires at least one provider; provider selection, callback details, provider-subject schema, duplicate-email conflict, and optional account linking belong to a later bounded `social-login` Plan and Design.
 
+`FOUNDATION-006-R2` supersedes only the remaining feature implementation order. The project completes the distinctive food-to-meal-to-daily-summary domain flow before adding the second signup/login method. Social login remains a core completion requirement and must be completed before final end-to-end verification and personal deployment.
+
 `LOCAL-LOGIN-001` supersedes only the Refresh Token rotation deferral and the minimal `local-login` ownership row. It adds Refresh Token issuance, server validity state, Access Token reissue, rotation, and logout revocation to the bounded local-login flow. Advanced reuse detection and multi-device session management remain deferred.
 
 The older Foundation document contained useful exploration, but its formal invited-tester service operations, commercial-production rollback, scheduled import, search-load, detailed batch, and exhaustive verification clauses are no longer implementation or completion requirements. A simple small deployment remains required.
@@ -133,12 +135,14 @@ Existing feature decisions remain only where they support the concise core flow 
 | `FOUNDATION-005` | Deferred by `FOUNDATION-006` | Account deletion is not required before the core toy flow is complete |
 | `FOUNDATION-006` | Approved, clarified | Deployed learning toy project for developer use and optional small acquaintance trial; fundamentals take priority over commercial operations, scale, and exhaustive coverage |
 | `FOUNDATION-006-R1` | Approved | Retains both email/password and at least one social signup/login path; detailed provider and account-linking choices remain feature-owned |
+| `FOUNDATION-006-R2` | Approved | Implements food, meal, and daily summary before social login; social login remains required before final verification and deployment |
 | `LOCAL-LOGIN-001` | Approved | Adds server-managed Refresh Token login persistence to the bounded local-login flow while retaining advanced session features as deferred |
 
 ## Version History
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.3.0 | 2026-08-26 | Recorded `FOUNDATION-006-R2`: moved social login after the core food and meal flow without removing it from MVP completion |
 | 2.2.0 | 2026-08-23 | Recorded the limited `LOCAL-LOGIN-001` supersession for Refresh Token login persistence and local-login ownership |
 | 2.1.0 | 2026-08-14 | Recorded `FOUNDATION-006-R1`: restored social signup/login as a core method while keeping it separate from local registration implementation |
 | 2.0.1 | 2026-08-14 | Clarified that a few acquaintances may voluntarily try the deployed toy project and provide feedback |

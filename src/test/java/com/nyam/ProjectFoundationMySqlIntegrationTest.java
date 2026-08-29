@@ -63,7 +63,7 @@ class ProjectFoundationMySqlIntegrationTest {
 					  AND success = TRUE
 					"""))
 					.as("Successful versioned application migration count")
-					.isEqualTo(4);
+					.isEqualTo(6);
 
 			assertThat(queryCount(connection, """
 					SELECT COUNT(*)
@@ -73,7 +73,7 @@ class ProjectFoundationMySqlIntegrationTest {
 					  AND table_name <> 'flyway_schema_history'
 					"""))
 					.as("Application base table count")
-					.isEqualTo(5);
+					.isEqualTo(15);
 		}
 
 		assertThat("validate".equals(environment.getProperty("spring.jpa.hibernate.ddl-auto")))

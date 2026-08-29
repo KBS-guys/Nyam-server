@@ -25,6 +25,7 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.flywaydb:flyway-core'
@@ -38,6 +39,7 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'org.springframework.batch:spring-batch-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'org.testcontainers:mysql'
@@ -56,4 +58,23 @@ tasks.withType(Javadoc).configureEach {
 	options.encoding = 'UTF-8'
 	options.charSet = 'UTF-8'
 	options.docEncoding = 'UTF-8'
+}
+
+tasks.register('foodImport', JavaExec) {
+	group = 'application'
+	description = '승인된 공공 식품 CSV를 수동 Spring Batch Job으로 적재합니다.'
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.nyam.domain.food.batch.FoodImportApplication'
+	doFirst {
+		def inputPath = System.getenv('NYAM_FOOD_IMPORT_PATH')
+		def releaseDate = System.getenv('NYAM_FOOD_IMPORT_RELEASE_DATE')
+		def checksum = System.getenv('NYAM_FOOD_IMPORT_CHECKSUM')
+		if (!inputPath || !releaseDate || !checksum) {
+			throw new GradleException('NYAM_FOOD_IMPORT_PATH, NYAM_FOOD_IMPORT_RELEASE_DATE, and NYAM_FOOD_IMPORT_CHECKSUM are required')
+		}
+		args(
+				"--food-import.path=${inputPath}",
+				"--food-import.release-date=${releaseDate}",
+				"--food-import.checksum=${checksum}")
+	}
 }
