@@ -130,6 +130,11 @@ public class Food {
         return energy;
     }
 
+    /** 기록 시 snapshot에 복사할 에너지 단위를 반환합니다. */
+    public String getEnergyUnit() {
+        return energyUnit;
+    }
+
     /**
      * 탄수화물 값을 반환합니다.
      *
@@ -137,6 +142,11 @@ public class Food {
      */
     public BigDecimal getCarbohydrate() {
         return carbohydrate;
+    }
+
+    /** 기록 시 snapshot에 복사할 탄수화물 단위를 반환합니다. */
+    public String getCarbohydrateUnit() {
+        return carbohydrateUnit;
     }
 
     /**
@@ -148,6 +158,11 @@ public class Food {
         return protein;
     }
 
+    /** 기록 시 snapshot에 복사할 단백질 단위를 반환합니다. */
+    public String getProteinUnit() {
+        return proteinUnit;
+    }
+
     /**
      * 지방 값을 반환합니다.
      *
@@ -155,5 +170,10 @@ public class Food {
      */
     public BigDecimal getFat() {
         return fat;
+    }
+
+    /** 기록 시 snapshot에 복사할 지방 단위를 반환합니다. */
+    public String getFatUnit() {
+        return fatUnit;
     }
 }
