@@ -45,6 +45,8 @@ public enum ErrorCode {
     PASSWORD_POLICY_VIOLATION(HttpStatus.UNPROCESSABLE_ENTITY, "PASSWORD_POLICY_VIOLATION", "비밀번호 정책을 충족하지 않습니다."),
     /** 요청한 식품을 찾을 수 없는 오류입니다. */
     FOOD_NOT_FOUND(HttpStatus.NOT_FOUND, "FOOD_NOT_FOUND", "식품을 찾을 수 없습니다."),
+    /** 식사가 없거나 현재 인증 사용자가 소유하지 않은 오류입니다. */
+    MEAL_NOT_FOUND(HttpStatus.NOT_FOUND, "MEAL_NOT_FOUND", "식사를 찾을 수 없습니다."),
     // USER
     /** 요청한 사용자를 찾을 수 없는 오류입니다. */
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "사용자를 찾을 수 없습니다.");
