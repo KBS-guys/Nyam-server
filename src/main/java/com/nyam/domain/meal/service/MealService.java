@@ -26,8 +26,6 @@ import com.nyam.global.exception.ErrorCode;
 @Service
 public class MealService {
 
-    private static final LocalDate MIN_MEAL_DATE = LocalDate.of(1000, 1, 1);
-    private static final LocalDate MAX_MEAL_DATE = LocalDate.of(9999, 12, 31);
     private static final int MAX_ITEMS = 20;
     private static final BigDecimal MAX_AMOUNT = new BigDecimal("10000.0000");
     private static final BigDecimal MAX_SNAPSHOT = new BigDecimal("999999999999.9999");
@@ -54,7 +52,7 @@ public class MealService {
         if (command == null) {
             throw new BusinessException(ErrorCode.INVALID_INPUT);
         }
-        requireMealDate(command.mealDate());
+        MealDatePolicy.requireValid(command.mealDate());
         List<NormalizedItem> normalizedItems = normalizeItems(command.items());
 
         List<Long> foodIds = normalizedItems.stream().map(NormalizedItem::foodId).toList();
@@ -79,7 +77,7 @@ public class MealService {
     @Transactional(readOnly = true)
     public List<Meal> list(long userId, LocalDate mealDate) {
         requireUserId(userId);
-        requireMealDate(mealDate);
+        MealDatePolicy.requireValid(mealDate);
         return mealRepository.findByUserIdAndMealDateOrderByIdDesc(userId, mealDate);
     }
 
@@ -158,12 +156,6 @@ public class MealService {
             throw new BusinessException(ErrorCode.INVALID_INPUT);
         }
         return result;
-    }
-
-    private void requireMealDate(LocalDate mealDate) {
-        if (mealDate == null || mealDate.isBefore(MIN_MEAL_DATE) || mealDate.isAfter(MAX_MEAL_DATE)) {
-            throw new BusinessException(ErrorCode.INVALID_INPUT);
-        }
     }
 
     private void requireUserId(long userId) {
