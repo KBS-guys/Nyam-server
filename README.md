@@ -86,47 +86,161 @@ Mailpit 인증번호 발송
 
 ## 아키텍처
 
-```text
-Client / Swagger UI
-        │
-        ▼
-Spring Security OAuth2 Resource Server
-        │  JWT 인증·사용자 식별
-        ▼
-Domain Controller
-        │  HTTP 계약·입력 검증
-        ▼
-Domain Service
-        │  비즈니스 규칙·트랜잭션
-        ▼
-JPA / JDBC Repository ─────────────────────┐
-        │                                  │
-        ▼                                  │
-MySQL 8.4.5                                │
-                                           │
-공공 식품 CSV → Spring Batch → foods ─────┘
-Mailpit       ← 이메일 인증번호 발송
+```mermaid
+flowchart TB
+    Client["API Client / Swagger UI"]
+
+    subgraph Application["Spring Boot Application"]
+        Security["Spring Security<br/>공개 경로 정책 · JWT 검증 · 사용자 식별"]
+
+        subgraph Web["Web Layer"]
+            UserWeb["User Controller<br/>이메일 인증 · 회원가입 · 로그인"]
+            FoodWeb["Food Controller<br/>식품 검색 · 상세 조회"]
+            MealWeb["Meal Controller<br/>식사 생성 · 조회 · 삭제"]
+            SummaryWeb["Daily Summary Controller<br/>일별 영양 요약"]
+        end
+
+        subgraph Services["Service Layer"]
+            UserService["User Services<br/>인증 트랜잭션 · Token 회전"]
+            FoodService["Food Query Service<br/>검색어 정규화"]
+            MealService["Meal Service<br/>영양 snapshot 생성"]
+            SummaryService["Daily Summary Service<br/>strict-null 집계"]
+        end
+
+        subgraph Repositories["Data Access Layer"]
+            UserRepo["User Repositories<br/>JPA · JDBC"]
+            FoodRepo["Food Repository<br/>JPA · JDBC"]
+            MealRepo["Meal Repository<br/>JPA aggregate query"]
+        end
+    end
+
+    subgraph Import["수동 식품 적재 프로세스"]
+        FoodCsv["승인된 공공 식품 CSV"]
+        FoodBatch["Spring Batch<br/>checksum · UTF-8 preflight · chunk upsert"]
+        FoodCsv --> FoodBatch
+    end
+
+    MySQL[("MySQL 8.4.5<br/>Flyway V1–V7")]
+    Mailpit["Mailpit SMTP<br/>로컬 인증번호 확인"]
+
+    Client --> Security
+    Security --> UserWeb
+    Security --> FoodWeb
+    Security --> MealWeb
+    Security --> SummaryWeb
+
+    UserWeb --> UserService --> UserRepo --> MySQL
+    FoodWeb --> FoodService --> FoodRepo --> MySQL
+    MealWeb --> MealService --> MealRepo --> MySQL
+    SummaryWeb --> SummaryService --> MealRepo
+    MealService -->|식품 일괄 조회| FoodRepo
+    UserService -->|인증번호 발송| Mailpit
+    FoodBatch --> MySQL
 ```
 
 도메인별로 `user`, `food`, `meal`, `dailysummary` 패키지를 나누고, Controller는 HTTP 처리, Service는 비즈니스 규칙과 트랜잭션, Repository는 데이터 접근을 담당합니다. 공개 API는 JPA Entity를 직접 반환하지 않습니다.
 
-## 데이터 모델
+## ERD
 
-```text
-email_verification_challenges ── 가입 완료 시 같은 트랜잭션에서 소비
+```mermaid
+erDiagram
+    direction LR
 
-users
-├── local_credentials            BCrypt password hash
-├── user_consents                필수 동의 이력
-├── refresh_tokens               사용자당 현재 token hash 1건
-└── meals 1 ─── N meal_items N ─── 1 foods
-                  │                   원본 식품 삭제 RESTRICT
-                  └── 기록 시점 식품·영양 snapshot
+    USERS {
+        BIGINT user_id PK
+        VARCHAR display_email
+        VARCHAR canonical_email UK
+        DATE birth_date
+        DATETIME created_at
+    }
 
-daily-summary API ── 저장 테이블 없이 meal_items snapshot을 조회 시점에 집계
+    LOCAL_CREDENTIALS {
+        BIGINT user_id PK, FK
+        VARCHAR password_hash
+        DATETIME created_at
+    }
+
+    USER_CONSENTS {
+        BIGINT consent_id PK
+        BIGINT user_id FK
+        VARCHAR consent_type
+        VARCHAR consent_version
+        DATETIME agreed_at
+    }
+
+    EMAIL_VERIFICATION_CHALLENGES {
+        VARCHAR canonical_email PK
+        VARCHAR display_email
+        BINARY code_verifier
+        DATETIME verification_started_at
+        DATETIME code_issued_at
+        DATETIME expires_at
+        TINYINT resend_count
+        TINYINT failed_attempt_count
+    }
+
+    REFRESH_TOKENS {
+        BIGINT user_id PK, FK
+        BINARY token_hash UK
+        DATETIME issued_at
+        DATETIME expires_at
+    }
+
+    FOODS {
+        BIGINT food_id PK
+        VARCHAR source_food_code UK
+        VARCHAR food_name
+        VARCHAR normalized_name
+        CHAR food_type
+        DECIMAL basis_amount
+        VARCHAR basis_unit
+        DECIMAL energy "nullable"
+        VARCHAR energy_unit
+        DECIMAL carbohydrate "nullable"
+        VARCHAR carbohydrate_unit
+        DECIMAL protein "nullable"
+        VARCHAR protein_unit
+        DECIMAL fat "nullable"
+        VARCHAR fat_unit
+        DATETIME created_at
+        DATETIME updated_at
+    }
+
+    MEALS {
+        BIGINT meal_id PK
+        BIGINT user_id FK
+        DATE meal_date
+    }
+
+    MEAL_ITEMS {
+        BIGINT meal_item_id PK
+        BIGINT meal_id FK
+        SMALLINT item_position
+        BIGINT food_id FK
+        VARCHAR food_name_snapshot
+        DECIMAL consumed_amount
+        VARCHAR consumed_unit
+        DECIMAL energy_snapshot "nullable"
+        VARCHAR energy_unit
+        DECIMAL carbohydrate_snapshot "nullable"
+        VARCHAR carbohydrate_unit
+        DECIMAL protein_snapshot "nullable"
+        VARCHAR protein_unit
+        DECIMAL fat_snapshot "nullable"
+        VARCHAR fat_unit
+    }
+
+    USERS ||--o| LOCAL_CREDENTIALS : "로컬 자격 증명"
+    USERS ||--o{ USER_CONSENTS : "필수 동의"
+    USERS ||--o| REFRESH_TOKENS : "현재 Token 1건"
+    USERS ||--o{ MEALS : "소유"
+    MEALS ||--|{ MEAL_ITEMS : "포함"
+    FOODS ||--o{ MEAL_ITEMS : "원본 참조"
 ```
 
-스키마는 Flyway V1~V7로 관리하며 운영 설정에서 Hibernate `ddl-auto`는 `validate`, Spring SQL 및 Batch schema 자동 초기화는 비활성화합니다.
+`email_verification_challenges`는 가입 전 상태이므로 `users`와 FK로 연결하지 않고, 회원가입 성공 시 같은 트랜잭션에서 소비합니다. `meal_items`는 현재 `foods` 값이 아니라 기록 시점 snapshot을 보관하며, 원본 식품 삭제는 `RESTRICT`됩니다. `daily-summary`는 별도 테이블 없이 이 snapshot을 조회 시점에 집계합니다.
+
+스키마는 Flyway V1~V7로 관리하며 운영 설정에서 Hibernate `ddl-auto`는 `validate`, Spring SQL 및 Batch schema 자동 초기화는 비활성화합니다. ERD에서는 애플리케이션 도메인 테이블만 다루고 Spring Batch 메타데이터 테이블은 제외했습니다.
 
 ## 기술 스택
 
