@@ -1,5 +1,6 @@
 package com.nyam.domain.user.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,21 +10,24 @@ import com.nyam.global.exception.BusinessException;
 import com.nyam.global.exception.ErrorCode;
 
 /**
- * 인증번호를 로컬 Mailpit SMTP로 동기 전달하고 실패를 공개 가능한 오류로 변환합니다.
+ * 인증번호를 설정된 SMTP로 동기 전달하고 실패를 공개 가능한 오류로 변환합니다.
  */
 @Component
 public class VerificationMailSender {
 
-    private static final String FROM_ADDRESS = "no-reply@nyamlog.local";
     private final JavaMailSender mailSender;
+    private final String fromAddress;
 
     /**
-     * Spring Mail 발송기를 주입받습니다.
+     * Spring Mail 발송기와 검증된 발신 주소를 주입받습니다.
      *
-     * @param mailSender 로컬 Mailpit과 통신하는 발송기
+     * @param mailSender 실행 환경의 SMTP 발송기
+     * @param fromAddress 로컬 기본 주소 또는 provider에서 검증한 발신 주소
      */
-    public VerificationMailSender(JavaMailSender mailSender) {
+    public VerificationMailSender(JavaMailSender mailSender,
+            @Value("${nyam.mail.from:no-reply@nyamlog.local}") String fromAddress) {
         this.mailSender = mailSender;
+        this.fromAddress = fromAddress;
     }
 
     /**
@@ -35,7 +39,7 @@ public class VerificationMailSender {
      */
     public void send(String displayEmail, String verificationCode) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(FROM_ADDRESS);
+        message.setFrom(fromAddress);
         message.setTo(displayEmail);
         message.setSubject("Nyamlog 이메일 인증번호");
         message.setText("Nyamlog 이메일 인증번호를 확인해 주세요.\n\n인증번호: "

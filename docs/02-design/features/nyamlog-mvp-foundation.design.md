@@ -1,10 +1,13 @@
 # nyamlog-mvp-foundation - Design Document
 
-> **Version**: 2.3.0 <br>
-> **Date**: 2026-08-26 <br>
+> **Revision**: 2.6.0 / `FOUNDATION-006-R5` — Approved (2026-09-03). See §14. <br>
+> Sections 1–13 preserve the earlier approved baseline; §14 is the current limited supersession. The recorded Foundation completion does not imply implementation of this revision.
+
+> **Version**: 2.6.0 <br>
+> **Date**: 2026-09-03 <br>
 > **Status**: Approved (Foundation Complete) <br>
 > **Plan**: `docs/01-plan/features/nyamlog-mvp-foundation.plan.md` <br>
-> **Current Design Decisions**: `FOUNDATION-006-R1`, `FOUNDATION-006-R2`, `LOCAL-LOGIN-001`
+> **Current Design Decisions**: `FOUNDATION-006-R1`, `FOUNDATION-006-R2`, `FOUNDATION-006-R3`, `FOUNDATION-006-R4`, `FOUNDATION-006-R5`, `LOCAL-LOGIN-001`
 
 ---
 
@@ -96,7 +99,7 @@ The first food implementation is deliberately small:
 - Return safe application error codes for meaningful client decisions.
 - Do not expose internal identifiers unless the client needs them.
 - Swagger descriptions are written in Korean and stay aligned with the implemented Controller and DTOs.
-- Swagger Try it out may be enabled only in an explicitly selected local or access-restricted personal environment.
+- Swagger Try it out may be enabled in an explicitly selected local or access-restricted personal environment, and on the public Render personal deployment under `FOUNDATION-006-R4` in section 10.5.
 
 ## 8. Verification Strategy
 
@@ -108,7 +111,7 @@ The required evidence is representative, not exhaustive.
 | Web | Main success response and representative validation/business error |
 | MySQL integration | Fresh migration, one core successful transaction, one rollback, and important constraints |
 | Security/ownership | One user cannot access another user's data |
-| Manual | Core happy path through Swagger and a smoke test or short acquaintance trial on the deployment |
+| Manual | Swagger supports documentation and manual exploration; official Render core-flow smoke uses curl/Postman, with a small voluntary acquaintance trial remaining optional |
 
 The following are optional:
 
@@ -167,7 +170,19 @@ Older verbose Foundation sections are superseded by this concise Design and are 
 - Complete `social-login` before final end-to-end Swagger verification and personal deployment.
 - Do not combine food, meal, daily summary, social login, or account deletion into one feature scope.
 
-### 10.3 `LOCAL-LOGIN-001` - Persistent Local Login
+### 10.3 `FOUNDATION-006-R3` - Backend Deployment Before Remaining Integration
+
+**Status:** Approved 2026-09-03 <br>
+**Supersedes:** Only the `FOUNDATION-006-R2` clause that requires social login before any personal deployment, and the remaining milestone order in section 11
+
+- First deploy the current local-auth backend as a Render Docker Web Service connected to external Managed MySQL and real mail, then verify the core APIs through curl/Postman.
+- Keep provider selection, TLS and network policy, health exposure, mail transport, food import procedure, rollback, and exact smoke evidence in the bounded `small-deployment` Plan and Design.
+- Next connect the Vercel frontend through an external `/api/*` rewrite that preserves the browser path, forwards the required API path, and explicitly disables rewrite caching; verify the Refresh Token cookie in a real browser.
+- Use Google as the first bounded social signup/login provider, then perform final end-to-end and OpenAPI hardening.
+- Keep social login as a core completion requirement. The first Render deployment proves the existing core flow but does not complete the whole Nyamlog project.
+- Keep Render backend deployment, Vercel integration, social login, and final hardening as separate bounded work.
+
+### 10.4 `LOCAL-LOGIN-001` - Persistent Local Login
 
 **Status:** Approved 2026-08-23 <br>
 **Supersedes:** Only the Refresh Token rotation deferral and client-only logout clause in section 4
@@ -178,15 +193,24 @@ Older verbose Foundation sections are superseded by this concise Design and are 
 - Keep advanced reuse detection, multi-device session management, and production-scale session infrastructure deferred.
 - Defer token lifetimes, persistence schema, digest algorithm, rotation concurrency, expiry policy, cookie attributes, and CORS/CSRF details to the integrated `local-login` Design.
 
+### 10.5 `FOUNDATION-006-R4` - Public Render Swagger with Official HTTP Smoke
+
+**Status:** Approved 2026-09-03 <br>
+**Supersedes:** Only the local/access-restricted-only Swagger Try it out environment rule in section 7, for the selected Render personal deployment
+
+- Allow anonymous access to Swagger UI/OpenAPI documentation and allow Try it out on that Render instance. Documentation access does not grant protected-API access.
+- Preserve existing authentication, ownership isolation, cookie/CSRF contracts, and safe errors for every client. Do not preconfigure shared accounts, tokens, or real credentials in documentation or the UI.
+- Keep curl/Postman as the official core smoke tools, including cookie-jar, rotation, logout, real-mail, and non-empty daily-summary evidence. Swagger success does not replace this evidence or the later Vercel browser-cookie smoke.
+- Retain the `FOUNDATION-006-R3` milestone order and the limited personal-use scope. This policy amendment does not approve the whole small-deployment Design, implementation, provider work, Git publication, or actual deployment.
+
 ## 11. Current Feature Order
 
-The project foundation, email verification, user registration, and local login slices are complete. The remaining feature order is:
+The project foundation, email verification, user registration, local login, food, meal, and daily-summary slices are complete. The remaining milestone order is:
 
-1. Implement simple food import, search, and detail.
-2. Implement authenticated meal create/read/delete with snapshots.
-3. Implement daily major-nutrient totals.
-4. Implement one bounded social signup/login provider using the same internal authentication result.
-5. Run the complete flow through Swagger, fix defects, deploy one personal instance, and document startup.
+1. Deploy the current backend to Render with external Managed MySQL and real mail, then run the local-auth core API smoke.
+2. Connect the Vercel frontend through the same-browser-path `/api/*` external rewrite and run the browser Refresh Token cookie smoke.
+3. Implement one bounded Google social signup/login flow using the same internal authentication result.
+4. Run final end-to-end and OpenAPI hardening and complete the personal-use flow.
 
 Account deletion and every deferred concern are optional follow-up maintenance work.
 
@@ -206,13 +230,36 @@ None. Feature-level Plans and Designs may choose their smallest implementation i
 | `FOUNDATION-005` | Deferred by `FOUNDATION-006` | Account deletion is optional after the core flow |
 | `FOUNDATION-006` | Approved, clarified | Deployed toy-project scope, optional small acquaintance trial, and representative verification |
 | `FOUNDATION-006-R1` | Approved | Email/password and at least one social signup/login method remain in the core project; social details are feature-owned |
-| `FOUNDATION-006-R2` | Approved | Completes food, meal, and daily summary before social login while retaining social login as a pre-deployment core requirement |
+| `FOUNDATION-006-R2` | Approved, order refined by `FOUNDATION-006-R3` | Completes food, meal, and daily summary before the remaining milestones |
+| `FOUNDATION-006-R3` | Approved | Runs the Render backend and core HTTP smoke before Vercel integration and Google social login while retaining social login before final hardening and completion |
+| `FOUNDATION-006-R4` | Approved | Allows public Swagger/OpenAPI and Try it out on Render without changing protected-API security or the official curl/Postman smoke requirement |
+| `FOUNDATION-006-R5` | Approved | Replaces the first-deployment real-mail/account acquisition smoke with seeded A/B users through the existing JWT/ownership boundary; final authentication requirements remain separate |
 | `LOCAL-LOGIN-001` | Approved | Adds server-managed Refresh Token persistence, reissue, rotation, and logout revocation to local login without expanding advanced session scope |
+
+## 14. FOUNDATION-006-R5 — Seeded domain deployment
+
+**Status: Approved (2026-09-03).** This limited supersession changes only the first-deployment acceptance in R3 and its real-mail/token-acquisition prerequisites. R3/R4 and all earlier approvals remain recorded; R5 now controls that narrower first-deployment scope. R4's public documentation permission and all authenticated ownership boundaries remain unchanged.
+
+The approved first-deployment path is: manually seeded synthetic users A/B → local-only 15-minute Access JWT issuance → existing Spring Security JWT validation → authenticated user ID → unchanged food/meal/daily-summary services → Aiven MySQL. This tests authentication and authorization; it defers the end-user registration and token-acquisition experience.
+
+- Seed only the user records needed for the existing owner FK. IDs come from MySQL, not constants or client-controlled API parameters. Seed execution is manual, separate from Flyway and application startup, and repeat-safe without overwriting unrelated data. No schema, ownership, consent or registration-policy change is implied.
+- Reuse the existing Access JWT issuer/decoder contract, including signature, expiry, issuer, audience and subject validation. The local tool has no public endpoint and is excluded from the runtime JAR/image. Its source may be versioned as development tooling, but secrets and token outputs must never enter Git, logs or documentation examples.
+- In the selected deployment profile, reject every `/api/v1/auth/**` request on the server, including valid-JWT requests; a hidden Swagger operation is not an access restriction. Keep food, meal and daily-summary authenticated and preserve cross-user isolation. Retain the existing local authentication implementation and regression tests.
+- Remove external SMTP and real-mail prerequisites from this deployment mode only. Do not simulate successful email delivery or infer that registration, login, refresh/logout or browser cookies have been verified.
+- Preserve the Docker/non-root/PORT, TLS identity verification, Flyway/MySQL constraints, food import integrity, ping-only HTTP 200 health, public Swagger opt-in and official curl/Postman smoke requirements. A/B isolation and non-empty summary before deletion are mandatory scenarios.
+- The developer's temporary database access covers only the separately approved import, seed and necessary DB checks, then is removed. Offline JWT issuance and subsequent HTTP smoke do not justify leaving that access open.
+
+The first milestone becomes seeded full-domain deployment smoke. Before the later Vercel browser-cookie milestone can pass, an approved end-user account/token flow must be available again. The existing Google and final E2E requirements are not silently removed; a future loginId/Google choice and any change to final authentication scope require their own explicit decision.
+
+Detailed contracts belong to approved `SMALL-DEPLOYMENT-003`, avoiding a second implementation design here. Existing local verification is preserved as baseline evidence. New implementation, new local verification and external deployment are unexecuted; this approval does not change PDCA completion or authorize those actions. Issue #22 approval-status synchronization remains a separately authorized GitHub action.
 
 ## Version History
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.6.0 | 2026-09-03 | Approved `FOUNDATION-006-R5`: defer account/token acquisition while retaining existing JWT/ownership for seeded full-domain smoke; no implementation approval or phase transition |
+| 2.5.0 | 2026-09-03 | Recorded `FOUNDATION-006-R4`: narrowly superseded the Swagger execution environment restriction for public Render documentation and manual use |
+| 2.4.0 | 2026-09-03 | Recorded `FOUNDATION-006-R3`: ordered Render backend smoke, Vercel browser integration, Google social login, then final hardening |
 | 2.3.0 | 2026-08-26 | Recorded `FOUNDATION-006-R2`: reordered the remaining features around the core food and meal flow while retaining social login |
 | 2.2.0 | 2026-08-23 | Recorded the limited `LOCAL-LOGIN-001` supersession for Refresh Token persistence and server-side logout revocation |
 | 2.1.0 | 2026-08-14 | Recorded `FOUNDATION-006-R1`: retained both local and social signup/login without expanding the current registration feature |

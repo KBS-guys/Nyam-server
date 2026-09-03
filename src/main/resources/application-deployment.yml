@@ -1,0 +1,78 @@
+# 로컬의 ignored application.yml/.env 없이도 배포와 food-import가 시작되어야 한다.
+server:
+  address: 0.0.0.0
+  port: ${PORT:8080}
+  shutdown: graceful
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never
+    include-exception: false
+
+spring:
+  application:
+    name: nyam
+  lifecycle:
+    timeout-per-shutdown-phase: 10s
+  datasource:
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 0
+      connection-timeout: 10000
+      data-source-properties:
+        sslMode: VERIFY_IDENTITY
+        fallbackToSystemTrustStore: false
+        trustCertificateKeyStoreType: PKCS12
+        trustCertificateKeyStoreUrl: ${MYSQL_TRUSTSTORE_URL}
+        trustCertificateKeyStorePassword: ${MYSQL_TRUSTSTORE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: false
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: never
+  sql:
+    init:
+      mode: never
+
+nyam:
+  deployment:
+    auth-endpoints-enabled: false
+
+springdoc:
+  api-docs:
+    enabled: ${NYAM_OPENAPI_ENABLED:false}
+  swagger-ui:
+    enabled: ${NYAM_OPENAPI_ENABLED:false}
+    persist-authorization: false
+  paths-to-match: /api/v1/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+      discovery:
+        enabled: false
+  endpoint:
+    health:
+      show-details: never
+      show-components: never
+      group:
+        render:
+          include: ping
+
+# Flyway INFO의 Database 메시지에 실제 JDBC endpoint를 남기지 않는다.
+logging:
+  level:
+    org.flywaydb: WARN

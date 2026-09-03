@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-08-31T04:16:00.5965918Z",
+  "lastUpdated": "2026-09-03T14:29:14Z",
   "activeFeatures": [
     "project-foundation",
     "user-registration",
@@ -9,9 +9,10 @@
     "auth-scope-reduction",
     "food",
     "meal",
-    "daily-summary"
+    "daily-summary",
+    "small-deployment"
   ],
-  "primaryFeature": "daily-summary",
+  "primaryFeature": "small-deployment",
   "features": {
     "nyamlog-mvp-foundation": {
       "phase": "completed",
@@ -20,6 +21,18 @@
       "documents": {
         "plan": "docs/01-plan/features/nyamlog-mvp-foundation.plan.md",
         "design": "docs/02-design/features/nyamlog-mvp-foundation.design.md"
+      },
+      "approvedRevision": {
+        "status": "approved",
+        "decision": "FOUNDATION-006-R5",
+        "approvedBaselineDecisions": [
+          "FOUNDATION-006-R3",
+          "FOUNDATION-006-R4"
+        ],
+        "approval": "approved",
+        "scope": "first-deployment-account-and-token-acquisition-deferred-existing-jwt-ownership-retained-final-auth-requirements-unchanged",
+        "createdAt": "2026-09-03T12:05:12Z",
+        "approvedAt": "2026-09-03T12:29:24Z"
       },
       "taskChain": [
         {
@@ -52,7 +65,7 @@
       ],
       "timestamps": {
         "started": "2026-07-27T07:08:04.235Z",
-        "lastUpdated": "2026-08-26T00:58:21.3792773Z",
+        "lastUpdated": "2026-09-03T12:29:24Z",
         "completed": "2026-08-05T12:57:23.5152796Z"
       }
     },
@@ -557,6 +570,69 @@
         "lastUpdated": "2026-08-31T04:16:00.5965918Z"
       },
       "completedAt": "2026-08-31T04:16:00.5965918Z"
+    },
+    "small-deployment": {
+      "phase": "do",
+      "matchRate": null,
+      "iterationCount": 0,
+      "documents": {
+        "plan": "docs/01-plan/features/small-deployment.plan.md",
+        "design": "docs/02-design/features/small-deployment.design.md"
+      },
+      "approvedRevision": {
+        "status": "approved",
+        "decisions": [
+          "FOUNDATION-006-R5",
+          "SMALL-DEPLOYMENT-001-R2",
+          "SMALL-DEPLOYMENT-003"
+        ],
+        "baselineDecisions": [
+          "SMALL-DEPLOYMENT-001",
+          "SMALL-DEPLOYMENT-001-R1",
+          "SMALL-DEPLOYMENT-002",
+          "SMALL-DEPLOYMENT-002-R1"
+        ],
+        "baselineEvidence": "docs/runbooks/small-deployment.md#7-로컬-do-검증-증거",
+        "scope": "seeded-users-a-b-local-short-lived-existing-jwt-full-domain-and-ownership-smoke-with-deployment-auth-paths-blocked-and-no-external-smtp",
+        "authorization": "separately-approved-003-implementation-and-local-verification-resumed-with-domain-only-scope-no-git-or-external-work",
+        "planApproval": "approved",
+        "designApproval": "approved",
+        "implementation": "implemented_local_scope",
+        "localVerification": "passed_local_scope_with_preserved_baseline_evidence",
+        "localEvidence": "docs/runbooks/small-deployment.md#9-small-deployment-003-로컬-do-증거-2026-09-03",
+        "executionScope": "food-meal-daily-summary-with-minimal-seed-a-b-existing-jwt-context-no-new-account-or-token-acquisition-flows",
+        "externalDeployment": "not_run",
+        "issue22DraftSync": "completed",
+        "issue22DraftSyncedAt": "2026-09-03T12:22:59Z",
+        "issue22ApprovalSync": "completed",
+        "issue22ApprovalSyncedAt": "2026-09-03T12:35:43Z",
+        "baselineEvidencePreserved": true,
+        "createdAt": "2026-09-03T12:05:12Z",
+        "approvedAt": "2026-09-03T12:29:24Z"
+      },
+      "taskChain": [
+        {
+          "phase": "plan",
+          "status": "completed",
+          "createdAt": "2026-09-02T15:00:05.0000866Z",
+          "completedAt": "2026-09-02T15:37:34.1638865Z"
+        },
+        {
+          "phase": "design",
+          "status": "completed",
+          "createdAt": "2026-09-02T15:50:27.8309871Z",
+          "completedAt": "2026-09-03T08:37:01.0514210Z"
+        },
+        {
+          "phase": "do",
+          "status": "in_progress",
+          "createdAt": "2026-09-03T09:07:57.8030889Z"
+        }
+      ],
+      "timestamps": {
+        "started": "2026-09-02T15:00:05.0000866Z",
+        "lastUpdated": "2026-09-03T14:29:14Z"
+      }
     }
   },
   "pipeline": {
@@ -567,7 +643,7 @@
   "session": {
     "startedAt": "2026-07-27T07:08:04.228Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-08-31T04:16:00.5965918Z"
+    "lastActivity": "2026-09-03T10:46:03Z"
   },
   "history": [
     {
@@ -1767,6 +1843,333 @@
       "iterationCount": 1,
       "scope": "daily-summary-completed-22-of-22-129-tests-no-skips-mysql-2-of-2-no-git-publication",
       "timestamp": "2026-08-31T04:16:00.5965918Z"
+    },
+    {
+      "feature": "nyamlog-mvp-foundation",
+      "action": "design_decision_approved",
+      "phase": "completed",
+      "decision": "FOUNDATION-006-R3",
+      "scope": "render-backend-core-smoke-before-vercel-browser-integration-google-social-login-and-final-hardening",
+      "timestamp": "2026-09-02T15:00:05.0000866Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "plan_draft_created",
+      "phase": "plan",
+      "nextPhase": null,
+      "decisionCandidate": "SMALL-DEPLOYMENT-001",
+      "scope": "issue-22-render-backend-managed-mysql-real-mail-core-smoke-plan-draft-no-design-implementation-or-git-publication",
+      "timestamp": "2026-09-02T15:00:05.0000866Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "plan_draft_revised",
+      "phase": "plan",
+      "nextPhase": null,
+      "decisionCandidate": "SMALL-DEPLOYMENT-001",
+      "scope": "health-contributor-boundary-existing-deployment-condition-production-mail-boundary-vercel-reference-removal-and-issue-next-gate",
+      "timestamp": "2026-09-02T15:32:16.0618009Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "plan_approved",
+      "phase": "plan",
+      "nextPhase": null,
+      "decision": "SMALL-DEPLOYMENT-001",
+      "scope": "issue-22-render-backend-managed-mysql-real-mail-core-http-smoke-plan-approved-no-design-transition-implementation-external-work-or-git-publication",
+      "timestamp": "2026-09-02T15:37:34.1638865Z"
+    },
+    {
+      "feature": "small-deployment",
+      "from": "plan",
+      "to": "design",
+      "action": "design_started",
+      "scope": "approved-plan-to-integrated-render-aiven-smtp2go-health-import-and-core-smoke-design-draft-no-implementation-external-work-or-git-publication",
+      "timestamp": "2026-09-02T15:50:27.8309871Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "design_draft_created",
+      "phase": "design",
+      "nextPhase": null,
+      "decisionCandidate": "SMALL-DEPLOYMENT-002",
+      "scope": "render-free-aiven-mysql-84-smtp2go-starttls-2525-dedicated-health-import-capacity-gates-and-core-http-smoke-draft-only",
+      "timestamp": "2026-09-02T15:50:27.8309871Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "design_draft_revised",
+      "phase": "design",
+      "nextPhase": null,
+      "decisionCandidate": "SMALL-DEPLOYMENT-002",
+      "scope": "smtp-quota-and-eligibility-non-root-secret-access-truststore-bootstrap-and-aiven-capacity-versus-latency-gates-no-design-approval-implementation-external-work-or-git-publication",
+      "timestamp": "2026-09-03T04:11:44.1455801Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "design_draft_revised",
+      "phase": "design",
+      "nextPhase": null,
+      "decisionCandidate": "SMALL-DEPLOYMENT-002",
+      "scope": "developer-apac-latency-candidate-and-relocation-conditions-ping-only-health-and-no-redirect-http-200-smoke-no-design-approval-implementation-external-work-or-git-publication",
+      "timestamp": "2026-09-03T04:27:41.8598283Z"
+    },
+    {
+      "feature": "nyamlog-mvp-foundation",
+      "action": "design_decision_approved",
+      "phase": "completed",
+      "decision": "FOUNDATION-006-R4",
+      "scope": "public-render-swagger-openapi-and-try-it-out-preserving-api-security-official-curl-postman-smoke-and-r3-milestones-policy-only",
+      "timestamp": "2026-09-03T04:33:26.2960781Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "plan_decision_approved",
+      "phase": "design",
+      "nextPhase": null,
+      "decision": "SMALL-DEPLOYMENT-001-R1",
+      "scope": "replace-render-openapi-disabled-policy-with-public-swagger-and-try-it-out-official-curl-postman-smoke-unchanged-no-whole-design-approval-implementation-issue-edit-external-work-or-git-publication",
+      "timestamp": "2026-09-03T04:33:26.2960781Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "design_draft_revised",
+      "phase": "design",
+      "nextPhase": null,
+      "decisionCandidate": "SMALL-DEPLOYMENT-002",
+      "scope": "align-draft-with-approved-public-render-swagger-openapi-and-try-it-out-policy-no-whole-design-approval-implementation-issue-edit-external-work-or-git-publication",
+      "timestamp": "2026-09-03T04:33:26.2960781Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "design_approved",
+      "phase": "design",
+      "nextPhase": null,
+      "decision": "SMALL-DEPLOYMENT-002",
+      "scope": "whole-design-draft-0.4.0-approved-as-1.0.0-without-technical-changes-no-do-transition-implementation-branch-external-work-deployment-or-git-publication",
+      "timestamp": "2026-09-03T08:37:01.0514210Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "do_started",
+      "from": "design",
+      "to": "do",
+      "decision": "SMALL-DEPLOYMENT-002",
+      "branch": "codex/small-deployment",
+      "scope": "user-approved-local-branch-do-transition-implementation-and-verification-only-no-provider-accounts-costs-real-credentials-deployment-stage-commit-push-or-pr",
+      "timestamp": "2026-09-03T09:07:57.8030889Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "local_implementation_verified",
+      "phase": "do",
+      "nextPhase": null,
+      "decision": "SMALL-DEPLOYMENT-002",
+      "branch": "codex/small-deployment",
+      "scope": "local-docker-tls-profile-health-mail-security-swagger-tests-and-runbook-only-no-external-provider-work-deployment-or-git-publication",
+      "evidence": "docs/runbooks/small-deployment.md",
+      "tests": {
+        "passed": 138,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "unexecuted": 0
+      },
+      "remaining": "separate-approval-for-smtp-eligibility-provider-accounts-costs-credentials-git-publication-approved-sha-deployment-remote-db-import-and-real-mail-core-smoke",
+      "timestamp": "2026-09-03T09:41:26.6826770Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "design_revision_approved",
+      "phase": "do",
+      "nextPhase": null,
+      "decision": "SMALL-DEPLOYMENT-002-R1",
+      "scope": "user-approved-render-creation-bootstrap-versus-acceptance-boundary-common-safe-defaults-and-clean-export-reproducibility-local-corrections-only",
+      "excluded": "new-branch-worktree-tracking-policy-changes-git-publication-provider-accounts-real-credentials-and-external-deployment",
+      "timestamp": "2026-09-03T10:46:03Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "local_clean_export_verified",
+      "phase": "do",
+      "nextPhase": null,
+      "decision": "SMALL-DEPLOYMENT-002-R1",
+      "branch": "codex/small-deployment",
+      "scope": "201-file-uncommitted-candidate-export-without-ignored-inputs-or-prior-build-output-test-javadoc-mysql-and-docker-runtime-reverification",
+      "evidence": "docs/runbooks/small-deployment.md#72-small-deployment-002-r1-clean-export-재검증",
+      "tests": {
+        "suites": 43,
+        "passed": 141,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "unexecuted": 0,
+        "mysqlSuites": 10,
+        "mysqlTests": 31,
+        "javadocWarnings": 78
+      },
+      "docker": {
+        "build": "passed",
+        "runtime": "passed",
+        "mysqlVersion": "8.4.5",
+        "successfulMigrations": 7,
+        "tlsIdentityVerification": "passed",
+        "commonDefaultOffWithoutDeploymentProfile": "passed",
+        "deploymentDefaultOffAndExplicitOptIn": "passed",
+        "packagedDefaultsAndLoader": "passed",
+        "temporaryResourceCleanup": "passed"
+      },
+      "notRerun": "full-source-food-import-and-prior-tls-negative-and-seven-entrypoint-failure-cases-retain-earlier-evidence",
+      "remaining": "separate-approval-for-provider-eligibility-accounts-costs-real-credentials-git-publication-render-bootstrap-approved-sha-deployment-remote-import-and-real-mail-core-smoke",
+      "timestamp": "2026-09-03T10:46:03Z"
+    },
+    {
+      "feature": "nyamlog-mvp-foundation",
+      "action": "decision_revision_draft_created",
+      "phase": "completed",
+      "nextPhase": null,
+      "decisionCandidate": "FOUNDATION-006-R5",
+      "scope": "first-deployment-seeded-jwt-domain-smoke-candidate-only-preserve-approved-r3-r4-and-final-auth-requirements-no-approval-or-phase-transition",
+      "timestamp": "2026-09-03T12:05:12Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "scope_revision_draft_created",
+      "phase": "do",
+      "nextPhase": null,
+      "decisionCandidates": [
+        "SMALL-DEPLOYMENT-001-R2",
+        "SMALL-DEPLOYMENT-003"
+      ],
+      "branch": "codex/small-deployment",
+      "scope": "foundation-plan-design-runbook-and-pdca-candidates-only-preserve-approved-decisions-and-existing-local-do-evidence",
+      "authorization": "document-drafts-pdca-records-and-issue-22-sync-only",
+      "excluded": "plan-design-approval-code-db-changes-new-branch-worktree-stage-commit-push-pr-merge-provider-accounts-credentials-costs-and-deployment",
+      "implementation": "not_started",
+      "localVerification": "not_run",
+      "externalDeployment": "not_run",
+      "timestamp": "2026-09-03T12:05:12Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "issue_revision_draft_sync_blocked",
+      "phase": "do",
+      "nextPhase": null,
+      "issue": "https://github.com/KBS-guys/Nyam-server/issues/22",
+      "decisionCandidates": [
+        "FOUNDATION-006-R5",
+        "SMALL-DEPLOYMENT-001-R2",
+        "SMALL-DEPLOYMENT-003"
+      ],
+      "scope": "issue-body-update-only",
+      "reason": "github-integration-write-forbidden-and-browser-action-unavailable",
+      "issueUnchanged": true,
+      "implementation": "not_started",
+      "localVerification": "not_run",
+      "externalDeployment": "not_run",
+      "timestamp": "2026-09-03T12:10:32Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "issue_revision_draft_synced",
+      "phase": "do",
+      "nextPhase": null,
+      "issue": "https://github.com/KBS-guys/Nyam-server/issues/22",
+      "decisionCandidates": [
+        "FOUNDATION-006-R5",
+        "SMALL-DEPLOYMENT-001-R2",
+        "SMALL-DEPLOYMENT-003"
+      ],
+      "scope": "issue-22-body-only-title-state-labels-assignees-and-milestone-preserved",
+      "bodyVerified": true,
+      "implementation": "not_started",
+      "localVerification": "not_run",
+      "externalDeployment": "not_run",
+      "timestamp": "2026-09-03T12:22:59Z"
+    },
+    {
+      "feature": "nyamlog-mvp-foundation",
+      "action": "decision_revision_approved",
+      "phase": "completed",
+      "nextPhase": null,
+      "decision": "FOUNDATION-006-R5",
+      "scope": "first-deployment-real-mail-and-account-token-acquisition-replaced-by-seeded-a-b-existing-jwt-and-full-domain-ownership-smoke-final-auth-requirements-preserved",
+      "excluded": "implementation-local-reverification-github-issue-approval-sync-git-publication-and-external-work",
+      "timestamp": "2026-09-03T12:29:24Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "plan_decision_approved",
+      "phase": "do",
+      "nextPhase": null,
+      "decision": "SMALL-DEPLOYMENT-001-R2",
+      "scope": "seeded-a-b-local-short-lived-existing-jwt-and-full-domain-smoke-plan-revision-approved",
+      "implementation": "not_started",
+      "localVerification": "not_run",
+      "externalDeployment": "not_run",
+      "excluded": "github-issue-approval-sync-code-db-changes-new-branch-worktree-stage-commit-push-pr-merge-provider-accounts-credentials-costs-and-deployment",
+      "timestamp": "2026-09-03T12:29:24Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "design_revision_approved",
+      "phase": "do",
+      "nextPhase": null,
+      "decision": "SMALL-DEPLOYMENT-003",
+      "scope": "seed-contract-local-jwt-auth-prefix-block-smtp-free-deployment-full-domain-ownership-smoke-and-pre-merge-approved-sha-order-design-approved",
+      "implementation": "not_started",
+      "localVerification": "not_run",
+      "externalDeployment": "not_run",
+      "excluded": "github-issue-approval-sync-code-db-changes-new-branch-worktree-stage-commit-push-pr-merge-provider-accounts-credentials-costs-and-deployment",
+      "timestamp": "2026-09-03T12:29:24Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "issue_approval_status_synced",
+      "phase": "do",
+      "nextPhase": null,
+      "issue": "https://github.com/KBS-guys/Nyam-server/issues/22",
+      "decisions": [
+        "FOUNDATION-006-R5",
+        "SMALL-DEPLOYMENT-001-R2",
+        "SMALL-DEPLOYMENT-003"
+      ],
+      "scope": "candidate-and-pending-wording-replaced-with-approved-status-in-current-issue-body-only",
+      "metadataPreserved": [
+        "title",
+        "open-state",
+        "labels",
+        "assignees",
+        "milestone"
+      ],
+      "bodyVerified": true,
+      "implementation": "not_started",
+      "localVerification": "not_run",
+      "externalDeployment": "not_run",
+      "timestamp": "2026-09-03T12:35:43Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "implementation_and_local_verification_recorded_after_resume",
+      "phase": "do",
+      "nextPhase": null,
+      "decision": "SMALL-DEPLOYMENT-003",
+      "scope": "finish-local-domain-smoke-only-using-existing-seed-and-short-lived-jwt-context-no-auth-feature-expansion",
+      "authorization": "user-approved-003-local-implementation-and-verification-then-narrowed-paused-and-resumed",
+      "implementation": "implemented_local_scope",
+      "evidence": "docs/runbooks/small-deployment.md#9-small-deployment-003-로컬-do-증거-2026-09-03",
+      "priorWorktreeTestResults": { "suites": 46, "passed": 150, "failures": 0, "errors": 0, "skipped": 0 },
+      "priorCleanExportTestResults": { "suites": 46, "passed": 150, "failures": 0, "errors": 0, "skipped": 0 },
+      "candidateFilesMatchedBeforeResume": 209,
+      "resumedDockerDomainSmoke": "passed-mysql-8.4.5-tls-smtp-free-startup-seed-repeat-full-domain-a-b-isolation-and-cleanup",
+      "resumedProductCodeChanges": false,
+      "resumedFullTestJavadocRun": false,
+      "resumedRealAuthFlowsRun": false,
+      "baselineEvidencePreserved": true,
+      "externalDeployment": "not_run",
+      "featureComplete": false,
+      "excluded": "new-branch-worktree-git-publication-issue-edit-provider-accounts-real-credentials-remote-db-and-deployment",
+      "timestamp": "2026-09-03T14:29:14Z"
     }
   ]
 }

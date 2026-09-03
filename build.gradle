@@ -14,10 +14,24 @@ java {
 	}
 }
 
+sourceSets {
+	smokeTools {
+		java.srcDir 'src/smokeTools/java'
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+	test {
+		compileClasspath += sourceSets.smokeTools.output
+		runtimeClasspath += sourceSets.smokeTools.output
+	}
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	smokeToolsImplementation.extendsFrom implementation
+	smokeToolsRuntimeOnly.extendsFrom runtimeOnly
 }
 
 repositories {
@@ -25,6 +39,7 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
@@ -50,6 +65,15 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+tasks.named('compileTestJava') {
+	dependsOn tasks.named('smokeToolsClasses')
+}
+
+tasks.named('bootJar') {
+	mainClass = 'com.nyam.NyamApplication'
+	archiveFileName = 'nyam.jar'
+}
+
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8'
 }
@@ -58,6 +82,18 @@ tasks.withType(Javadoc).configureEach {
 	options.encoding = 'UTF-8'
 	options.charSet = 'UTF-8'
 	options.docEncoding = 'UTF-8'
+}
+
+tasks.register('smokeToolsJavadoc', Javadoc) {
+	group = 'documentation'
+	description = '배포 smoke 전용 로컬 도구의 JavaDoc을 생성합니다.'
+	source = sourceSets.smokeTools.allJava
+	classpath = sourceSets.smokeTools.compileClasspath
+	destinationDir = layout.buildDirectory.dir('docs/javadoc-smoke-tools').get().asFile
+}
+
+tasks.named('javadoc') {
+	dependsOn tasks.named('smokeToolsJavadoc')
 }
 
 tasks.register('foodImport', JavaExec) {
@@ -77,4 +113,20 @@ tasks.register('foodImport', JavaExec) {
 				"--food-import.release-date=${releaseDate}",
 				"--food-import.checksum=${checksum}")
 	}
+}
+
+tasks.register('smokeSeedUsers', JavaExec) {
+	group = 'application'
+	description = '명시적으로 지정한 MySQL에 합성 smoke 사용자 A/B를 검증하거나 생성합니다.'
+	dependsOn tasks.named('smokeToolsClasses')
+	classpath = sourceSets.smokeTools.runtimeClasspath
+	mainClass = 'com.nyam.deployment.smoke.SmokeUserSeedApplication'
+}
+
+tasks.register('smokeIssueAccessToken', JavaExec) {
+	group = 'application'
+	description = '검증된 smoke 사용자 A/B 중 하나의 15분 Access Token을 비공개 파일에 기록합니다.'
+	dependsOn tasks.named('smokeToolsClasses')
+	classpath = sourceSets.smokeTools.runtimeClasspath
+	mainClass = 'com.nyam.global.security.LocalSmokeAccessTokenApplication'
 }

@@ -45,6 +45,7 @@ public class AccessTokenIssuer {
                 .issuer("nyamlog")
                 .subject(Long.toString(userId))
                 .audience(List.of("nyamlog-api"))
+                .issuedAt(issuedAt)
                 .expiresAt(issuedAt.plus(ACCESS_TOKEN_LIFETIME))
                 .build();
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();

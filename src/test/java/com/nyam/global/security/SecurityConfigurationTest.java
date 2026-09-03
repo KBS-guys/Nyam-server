@@ -62,6 +62,7 @@ class SecurityConfigurationTest {
         assertThat(jwt.getClaimAsString("iss")).isEqualTo("nyamlog");
         assertThat(jwt.getSubject()).isEqualTo("7");
         assertThat(jwt.getAudience()).containsExactly("nyamlog-api");
+        assertThat(jwt.getIssuedAt()).isEqualTo(NOW);
         assertThat(jwt.getExpiresAt()).isEqualTo(NOW.plusSeconds(900));
     }
 
