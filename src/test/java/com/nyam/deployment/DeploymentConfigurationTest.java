@@ -75,7 +75,7 @@ class DeploymentConfigurationTest {
                     .containsEntry("mail.smtp.timeout", "5000")
                     .containsEntry("mail.smtp.writetimeout", "5000");
             assertThat(env.getProperty("nyam.mail.from")).isNull();
-            assertThat(env.getProperty("nyam.deployment.auth-endpoints-enabled", Boolean.class)).isFalse();
+            assertThat(env.getProperty("nyam.deployment.auth-endpoints-enabled")).isNull();
             assertThat(env.getProperty("server.port")).isEqualTo("19090");
             assertThat(env.getProperty("server.address")).isEqualTo("0.0.0.0");
             assertThat(env.getProperty("server.shutdown")).isEqualTo("graceful");

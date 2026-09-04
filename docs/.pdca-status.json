@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-09-03T14:29:14Z",
+  "lastUpdated": "2026-09-04T01:19:07Z",
   "activeFeatures": [
     "project-foundation",
     "user-registration",
@@ -583,32 +583,40 @@
         "status": "approved",
         "decisions": [
           "FOUNDATION-006-R5",
-          "SMALL-DEPLOYMENT-001-R2",
-          "SMALL-DEPLOYMENT-003"
+          "SMALL-DEPLOYMENT-001-R3",
+          "SMALL-DEPLOYMENT-004"
         ],
         "baselineDecisions": [
           "SMALL-DEPLOYMENT-001",
           "SMALL-DEPLOYMENT-001-R1",
+          "SMALL-DEPLOYMENT-001-R2",
           "SMALL-DEPLOYMENT-002",
-          "SMALL-DEPLOYMENT-002-R1"
+          "SMALL-DEPLOYMENT-002-R1",
+          "SMALL-DEPLOYMENT-003"
         ],
-        "baselineEvidence": "docs/runbooks/small-deployment.md#7-로컬-do-검증-증거",
-        "scope": "seeded-users-a-b-local-short-lived-existing-jwt-full-domain-and-ownership-smoke-with-deployment-auth-paths-blocked-and-no-external-smtp",
-        "authorization": "separately-approved-003-implementation-and-local-verification-resumed-with-domain-only-scope-no-git-or-external-work",
+        "baselineEvidence": "docs/runbooks/small-deployment.md#10-보존된-로컬-do-증거",
+        "scope": "post-merge-dev-render-aiven-core-domain-acceptance-with-fixed-deployment-auth-block-and-atomic-seed-manifest",
+        "authorization": "user-directed-four-part-pr23-simplification-code-doc-test-and-status-alignment-no-merge",
         "planApproval": "approved",
         "designApproval": "approved",
         "implementation": "implemented_local_scope",
-        "localVerification": "passed_local_scope_with_preserved_baseline_evidence",
-        "localEvidence": "docs/runbooks/small-deployment.md#9-small-deployment-003-로컬-do-증거-2026-09-03",
+        "localVerification": "passed_47_suites_151_tests_zero_skipped_actual_mysql_8_4_5_and_docker_build",
+        "localEvidence": "docs/runbooks/small-deployment.md#11-small-deployment-004-로컬-do-증거-2026-09-04",
         "executionScope": "food-meal-daily-summary-with-minimal-seed-a-b-existing-jwt-context-no-new-account-or-token-acquisition-flows",
         "externalDeployment": "not_run",
-        "issue22DraftSync": "completed",
-        "issue22DraftSyncedAt": "2026-09-03T12:22:59Z",
+        "issue22DraftSync": "completed_current_revision_sync",
+        "issue22DraftSyncedAt": "2026-09-04T01:05:06Z",
         "issue22ApprovalSync": "completed",
         "issue22ApprovalSyncedAt": "2026-09-03T12:35:43Z",
+        "pr23DescriptionSync": "completed_current_revision_sync",
+        "pr23DescriptionSyncedAt": "2026-09-04T01:07:02Z",
+        "pr23CodePublication": "authorized_current_revision_stage_commit_push_no_merge",
+        "issue22Title": "[Feat] Render 기반 핵심 도메인 배포 및 smoke test",
+        "issue22TitleSyncedAt": "2026-09-04T01:07:02Z",
         "baselineEvidencePreserved": true,
         "createdAt": "2026-09-03T12:05:12Z",
-        "approvedAt": "2026-09-03T12:29:24Z"
+        "approvedAt": "2026-09-03T12:29:24Z",
+        "revisedAt": "2026-09-04T01:19:07Z"
       },
       "taskChain": [
         {
@@ -631,7 +639,7 @@
       ],
       "timestamps": {
         "started": "2026-09-02T15:00:05.0000866Z",
-        "lastUpdated": "2026-09-03T14:29:14Z"
+        "lastUpdated": "2026-09-04T01:19:07Z"
       }
     }
   },
@@ -2170,6 +2178,88 @@
       "featureComplete": false,
       "excluded": "new-branch-worktree-git-publication-issue-edit-provider-accounts-real-credentials-remote-db-and-deployment",
       "timestamp": "2026-09-03T14:29:14Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "core_domain_pr_scope_simplified_and_local_verification_attempted",
+      "phase": "do",
+      "nextPhase": null,
+      "decisions": [
+        "SMALL-DEPLOYMENT-001-R3",
+        "SMALL-DEPLOYMENT-004"
+      ],
+      "branch": "codex/small-deployment",
+      "scope": "remove-auth-runtime-toggle-atomic-seed-manifest-post-merge-dev-deployment-and-sixteen-core-domain-acceptance-conditions",
+      "implementation": "implemented_local_scope",
+      "evidence": "docs/runbooks/small-deployment.md#11-small-deployment-004-로컬-do-증거-2026-09-04",
+      "testResults": {
+        "suites": 47,
+        "passed": 151,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "javadoc": "passed_with_78_pre_existing_warnings"
+      },
+      "actualMySqlVerification": "passed_mysql_8_4_5_13_suites_39_tests_zero_skipped_including_manifest_failure_rollback",
+      "dockerBuild": "passed_nyam-small-deployment-pr23-review_non_root_entrypoint_verified",
+      "baselineEvidencePreserved": true,
+      "externalDeployment": "not_run",
+      "featureComplete": false,
+      "next": "sync-pr23-and-issue22-then-review-for-separate-merge-approval",
+      "excluded": "merge-provider-accounts-real-credentials-remote-db-writes-and-external-deployment",
+      "timestamp": "2026-09-04T00:59:46Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "issue_and_pr_acceptance_scope_synced",
+      "phase": "do",
+      "nextPhase": null,
+      "issue": "https://github.com/KBS-guys/Nyam-server/issues/22",
+      "pullRequest": "https://github.com/KBS-guys/Nyam-server/pull/23",
+      "decisions": [
+        "SMALL-DEPLOYMENT-001-R3",
+        "SMALL-DEPLOYMENT-004"
+      ],
+      "scope": "sixteen-core-domain-acceptance-conditions-post-merge-dev-deployment-and-auth-features-deferred",
+      "metadataPreserved": [
+        "issue-title",
+        "issue-open-state",
+        "issue-labels",
+        "pr-title",
+        "pr-open-state",
+        "pr-base-and-head"
+      ],
+      "remoteCodeHeadBeforePublication": "90521830b3b8422a0fb1a1226e5aa685a52f53cb",
+      "bodyVerified": true,
+      "externalDeployment": "not_run",
+      "featureComplete": false,
+      "timestamp": "2026-09-04T01:05:06Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "issue_and_pr_roles_simplified",
+      "phase": "do",
+      "nextPhase": null,
+      "issue": "https://github.com/KBS-guys/Nyam-server/issues/22",
+      "pullRequest": "https://github.com/KBS-guys/Nyam-server/pull/23",
+      "issueTitle": "[Feat] Render 기반 핵심 도메인 배포 및 smoke test",
+      "prTitle": "feat: Render 개인 배포용 핵심 도메인 smoke 추가",
+      "scope": "issue-defines-feature-completion-pr-describes-core-domain-deployment-code-auth-acquisition-remains-follow-up",
+      "bodyVerified": true,
+      "externalDeployment": "not_run",
+      "featureComplete": false,
+      "timestamp": "2026-09-04T01:07:02Z"
+    },
+    {
+      "feature": "small-deployment",
+      "action": "pr23_revision_publication_authorized",
+      "phase": "do",
+      "nextPhase": null,
+      "pullRequest": "https://github.com/KBS-guys/Nyam-server/pull/23",
+      "branch": "codex/small-deployment",
+      "scope": "approved-ten-path-stage-commit-and-push-for-current-core-domain-simplification",
+      "excluded": "merge-provider-accounts-real-credentials-remote-db-writes-and-external-deployment",
+      "timestamp": "2026-09-04T01:19:07Z"
     }
   ]
 }

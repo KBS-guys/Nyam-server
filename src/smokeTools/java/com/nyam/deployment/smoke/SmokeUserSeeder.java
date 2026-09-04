@@ -34,11 +34,7 @@ public final class SmokeUserSeeder {
         connection.setAutoCommit(false);
         connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
         try {
-            long userA = findOrCreate(connection, SmokeSeedManifest.USER_A_EMAIL, USER_A_BIRTH_DATE, now);
-            long userB = findOrCreate(connection, SmokeSeedManifest.USER_B_EMAIL, USER_B_BIRTH_DATE, now);
-            requireNoAuthenticationData(connection, userA, SmokeSeedManifest.USER_A_EMAIL);
-            requireNoAuthenticationData(connection, userB, SmokeSeedManifest.USER_B_EMAIL);
-            SmokeSeedManifest.Users users = new SmokeSeedManifest.Users(userA, userB);
+            SmokeSeedManifest.Users users = seedInCurrentTransaction(connection, now);
             connection.commit();
             return users;
         } catch (SQLException | RuntimeException exception) {
@@ -48,6 +44,26 @@ public final class SmokeUserSeeder {
             connection.setTransactionIsolation(originalIsolation);
             connection.setAutoCommit(originalAutoCommit);
         }
+    }
+
+    /**
+     * 호출자가 관리하는 트랜잭션 안에서 A/B를 준비하되 commit하지 않습니다.
+     * manifest 같은 후속 산출물이 준비된 뒤에만 DB를 확정해야 하는 CLI가 사용합니다.
+     *
+     * @param connection auto-commit이 꺼진 MySQL 연결
+     * @param now 사용자 생성에 사용할 UTC 기준 시각
+     * @return 검증된 A/B 사용자 ID
+     * @throws SQLException 데이터베이스 작업이 실패한 경우
+     */
+    SmokeSeedManifest.Users seedInCurrentTransaction(Connection connection, Instant now) throws SQLException {
+        if (connection.getAutoCommit()) {
+            throw new IllegalStateException("Smoke user seed requires an active transaction");
+        }
+        long userA = findOrCreate(connection, SmokeSeedManifest.USER_A_EMAIL, USER_A_BIRTH_DATE, now);
+        long userB = findOrCreate(connection, SmokeSeedManifest.USER_B_EMAIL, USER_B_BIRTH_DATE, now);
+        requireNoAuthenticationData(connection, userA, SmokeSeedManifest.USER_A_EMAIL);
+        requireNoAuthenticationData(connection, userB, SmokeSeedManifest.USER_B_EMAIL);
+        return new SmokeSeedManifest.Users(userA, userB);
     }
 
     private long findOrCreate(
