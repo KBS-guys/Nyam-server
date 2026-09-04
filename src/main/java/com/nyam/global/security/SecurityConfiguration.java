@@ -10,6 +10,8 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,12 +37,15 @@ import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nyam.global.exception.ErrorCode;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 
 /**
  * 무상태 Bearer JWT 인증과 공개 인증 경로, 안전한 필터 오류 계약을 구성합니다.
  */
 @Configuration
+@OpenAPIDefinition(servers = @Server(url = "/"))
 @SecurityScheme(
         name = "bearerAuth",
         type = SecuritySchemeType.HTTP,
@@ -113,18 +118,21 @@ public class SecurityConfiguration {
     }
 
     /**
-     * 로그인·재발급·로그아웃에서 오래되거나 잘못된 Bearer 헤더를 무시하는 해결기를 구성합니다.
+     * 일반 환경에서는 인증 복구 경로의 Bearer 헤더를 무시하고, 해당 경로가 차단된
+     * deployment 환경에서는 유효 JWT도 403으로 판정할 수 있도록 모든 Bearer를 읽습니다.
      *
-     * @return 인증 복구 경로를 제외한 요청에서만 Bearer 값을 읽는 해결기
+     * @param environment 현재 활성 profile을 제공하는 실행 환경
+     * @return 환경별 인증 복구 경계를 적용한 Bearer 해결기
      */
     @Bean
-    BearerTokenResolver bearerTokenResolver() {
+    BearerTokenResolver bearerTokenResolver(Environment environment) {
+        boolean deployment = isDeployment(environment);
         DefaultBearerTokenResolver delegate = new DefaultBearerTokenResolver();
         return request -> {
             String path = request.getRequestURI();
-            if (path.equals("/api/v1/auth/login")
+            if (!deployment && (path.equals("/api/v1/auth/login")
                     || path.equals("/api/v1/auth/refresh")
-                    || path.equals("/api/v1/auth/logout")) {
+                    || path.equals("/api/v1/auth/logout"))) {
                 return null;
             }
             return delegate.resolve(request);
@@ -132,11 +140,13 @@ public class SecurityConfiguration {
     }
 
     /**
-     * 공개 인증 API와 보호 API의 무상태 Spring Security 경계를 구성합니다.
+     * 공개 인증·문서·정확한 GET health 경로와 보호 API의 무상태 보안 경계를 구성합니다.
+     * 그 외 Actuator 경로는 인증 여부와 관계없이 거부합니다.
      *
      * @param http Spring Security HTTP 구성기
      * @param bearerTokenResolver 인증 복구 경로를 제외하는 Bearer 해결기
      * @param errorResponder 필터 실패 공통 JSON 작성기
+     * @param environment deployment profile 여부를 제공하는 실행 환경
      * @return 애플리케이션 보안 필터 체인
      * @throws Exception 필터 체인을 구성하지 못한 경우
      */
@@ -144,7 +154,9 @@ public class SecurityConfiguration {
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             BearerTokenResolver bearerTokenResolver,
-            SecurityErrorResponder errorResponder) throws Exception {
+            SecurityErrorResponder errorResponder,
+            Environment environment) throws Exception {
+        boolean deployment = isDeployment(environment);
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
@@ -152,18 +164,27 @@ public class SecurityConfiguration {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST,
+                .authorizeHttpRequests(authorize -> {
+                    authorize
+                            .requestMatchers(HttpMethod.GET, "/actuator/health/render").permitAll()
+                            .requestMatchers("/actuator", "/actuator/**").denyAll();
+                    if (deployment) {
+                        authorize.requestMatchers("/api/v1/auth/**").denyAll();
+                    } else {
+                        authorize.requestMatchers(HttpMethod.POST,
                                 "/api/v1/auth/signup",
                                 "/api/v1/auth/login",
                                 "/api/v1/auth/refresh",
                                 "/api/v1/auth/logout",
                                 "/api/v1/auth/email-verifications")
-                        .permitAll()
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
-                        .permitAll()
-                        .requestMatchers("/api/v1/**").authenticated()
-                        .anyRequest().permitAll())
+                                .permitAll();
+                    }
+                    authorize
+                            .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                            .permitAll()
+                            .requestMatchers("/api/v1/**").authenticated()
+                            .anyRequest().permitAll();
+                })
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, exception) ->
                                 errorResponder.write(response, ErrorCode.UNAUTHORIZED, true))
@@ -175,6 +196,10 @@ public class SecurityConfiguration {
                                 errorResponder.write(response, ErrorCode.UNAUTHORIZED, true))
                         .jwt(Customizer.withDefaults()));
         return http.build();
+    }
+
+    private static boolean isDeployment(Environment environment) {
+        return environment.acceptsProfiles(Profiles.of("deployment"));
     }
 
     /**
