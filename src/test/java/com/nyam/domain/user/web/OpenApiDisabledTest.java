@@ -5,13 +5,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
+import org.springdoc.core.configuration.SpringDocConfiguration;
+import org.springdoc.core.properties.SpringDocConfigProperties;
+import org.springdoc.core.properties.SwaggerUiConfigProperties;
+import org.springdoc.core.properties.SwaggerUiOAuthProperties;
+import org.springdoc.webmvc.core.configuration.SpringDocWebMvcConfiguration;
+import org.springdoc.webmvc.ui.SwaggerConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.support.ResourcePropertySource;
 
 import com.nyam.domain.user.service.UserRegistrationService;
 
@@ -23,6 +30,11 @@ import com.nyam.domain.user.service.UserRegistrationService;
         "springdoc.swagger-ui.enabled=false"
 })
 @AutoConfigureMockMvc(addFilters = false)
+@ImportAutoConfiguration(classes = {
+        SpringDocConfiguration.class, SpringDocConfigProperties.class,
+        SwaggerUiConfigProperties.class, SwaggerUiOAuthProperties.class,
+        SpringDocWebMvcConfiguration.class, SwaggerConfig.class
+})
 class OpenApiDisabledTest {
 
     @Autowired
@@ -40,17 +52,18 @@ class OpenApiDisabledTest {
     void doesNotExposeDocsOrUiByDefault() throws Exception {
         mockMvc.perform(get("/v3/api-docs")).andExpect(status().isNotFound());
         mockMvc.perform(get("/swagger-ui.html")).andExpect(status().isNotFound());
+        mockMvc.perform(get("/swagger-ui/index.html")).andExpect(status().isNotFound());
     }
 
     /**
      * 공통 설정이 문서를 기본 비활성화하되 명시적 활성화 시 요청 실행을 별도로 막지 않는지 확인합니다.
      *
-     * @throws Exception YAML 설정 리소스를 읽지 못한 경우
+     * @throws Exception 공통 설정 리소스를 읽지 못한 경우
      */
     @Test
     void commonConfigurationKeepsDocsDefaultOffAndAllowsExplicitTryItOut() throws Exception {
-        var propertySource = new YamlPropertySourceLoader()
-                .load("application", new ClassPathResource("application.yml")).get(0);
+        var propertySource = new ResourcePropertySource("nyam-defaults",
+                new ClassPathResource("nyam-defaults.properties"));
 
         assertThat(propertySource.getProperty("springdoc.api-docs.enabled"))
                 .isEqualTo("${NYAM_OPENAPI_ENABLED:false}");
@@ -60,5 +73,7 @@ class OpenApiDisabledTest {
                 .isNull();
         assertThat(propertySource.getProperty("springdoc.paths-to-match"))
                 .isEqualTo("/api/v1/**");
+        assertThat(propertySource.getProperty("springdoc.swagger-ui.persist-authorization"))
+                .isEqualTo("false");
     }
 }
