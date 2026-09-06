@@ -36,7 +36,6 @@ class DeploymentConfigurationTest {
                     assertThat(sender.getJavaMailProperties())
                             .containsEntry("mail.smtp.auth", "false")
                             .containsEntry("mail.smtp.starttls.enable", "false")
-                            .containsEntry("mail.smtp.starttls.required", "false")
                             .containsEntry("mail.smtp.timeout", "5000");
                 });
     }
@@ -70,7 +69,6 @@ class DeploymentConfigurationTest {
             assertThat(sender.getJavaMailProperties())
                     .containsEntry("mail.smtp.auth", "false")
                     .containsEntry("mail.smtp.starttls.enable", "false")
-                    .containsEntry("mail.smtp.starttls.required", "false")
                     .containsEntry("mail.smtp.connectiontimeout", "5000")
                     .containsEntry("mail.smtp.timeout", "5000")
                     .containsEntry("mail.smtp.writetimeout", "5000");

@@ -150,3 +150,15 @@ JWT, signing secret, DB password, provider credential, CA 내용, private endpoi
 - Render/Aiven remote acceptance: 미실행
 
 현재 revision의 전체 회귀, 실제 MySQL과 Docker build는 통과했다. 외부 acceptance가 Plan의 16개 조건을 모두 충족하기 전에는 feature 완료나 Check 전환을 선언하지 않는다.
+
+## 12. P3 SMTP 범위 정리 후 로컬 검증 (2026-09-06)
+
+- 로컬 검증 대상: `e06bffd` 이후 미커밋 SMTP 정리 candidate. 메일 설정과 발신자 구현을 PR base의 기존 Mailpit 계약으로 복원하고, 이번 PR에서 추가한 `VerificationMailSenderTest`의 2개 테스트를 함께 제거했다.
+- `DeploymentConfigurationTest`는 원래 설정에 없는 `mail.smtp.starttls.required=false` assertion 2곳만 제거했다. TLS·pool·health·OpenAPI·SMTP 없는 기동 검증과 `OpenApiDisabledTest`는 유지했다.
+- API·DB schema·deployment auth 차단 계약 변경 없음. PDCA는 `small-deployment / Do`를 유지한다.
+- 최초 `test javadoc`: Docker 엔진 시작 오류로 110 passed / failures 0 / errors 0 / skipped 39. 실제 MySQL 성공 증거로 사용하지 않는다.
+- Docker 정상 기동 후 `.\gradlew.bat test javadoc --rerun-tasks`: **46 suites / 149 passed / failures 0 / errors 0 / skipped 0 / unexecuted 0**, `BUILD SUCCESSFUL`.
+- 실제 MySQL 8.4.5: **13 suites / 39 tests, skipped 0**. 기존 Mailpit 이메일 흐름, deployment HTTP/auth 경계와 domain/ownership 테스트도 통과했다.
+- JavaDoc 성공: 기존 경고 78개, smokeTools 경고 0. `git diff --check` 통과.
+- 이번 정리에서는 Docker image build/runtime, clean export, 전체 food import와 TLS negative를 재실행하지 않았다. 10~11절의 과거 증거와 구분한다.
+- 로컬 검증 완료 후 사용자가 위 코드·테스트 4개 파일과 이 runbook의 stage·commit·push를 승인했다. 게시 대상은 기존 `codex/small-deployment` 브랜치와 PR #23이며, merge와 Render/Aiven 외부 acceptance는 미실행·이번 승인 범위 밖이다.
