@@ -52,7 +52,8 @@ class DeploymentConfigurationTest {
             assertThat(pool.getMinimumIdle()).isZero();
             assertThat(pool.getConnectionTimeout()).isEqualTo(10000);
             var jdbc = pool.getDataSourceProperties();
-            assertThat(jdbc.size()).isEqualTo(5);
+            assertThat(jdbc.size()).isEqualTo(6);
+            assertThat(jdbc.getProperty("rewriteBatchedStatements")).isEqualTo("true");
             assertThat(jdbc.getProperty("sslMode")).isEqualTo("VERIFY_IDENTITY");
             assertThat(jdbc.getProperty("fallbackToSystemTrustStore")).isEqualTo("false");
             assertThat(jdbc.getProperty("trustCertificateKeyStoreType")).isEqualTo("PKCS12");

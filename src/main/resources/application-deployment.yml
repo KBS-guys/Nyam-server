@@ -29,6 +29,7 @@ spring:
         trustCertificateKeyStoreType: PKCS12
         trustCertificateKeyStoreUrl: ${MYSQL_TRUSTSTORE_URL}
         trustCertificateKeyStorePassword: ${MYSQL_TRUSTSTORE_PASSWORD}
+        rewriteBatchedStatements: true
   jpa:
     hibernate:
       ddl-auto: validate
